@@ -20,11 +20,11 @@ export default function RegisterPage() {
             console.log("A:",a)
             if(result.data.statusCode === "Result is valid. New user has been created")
             {
-                navigate('/')
+              navigate('/profile')
             }
             else
             {
-                alert('Invalid User')
+              alert('Invalid User')
             }
         }) 
     }

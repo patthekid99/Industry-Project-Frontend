@@ -20,7 +20,7 @@ export default function LoginPage(props) {
             console.log("A:",a)
             if(result.data.statusCode === "OK")
             {
-                navigate('/')
+              navigate('/home')
             }
             else
             {
