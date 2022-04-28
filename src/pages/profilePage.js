@@ -3,12 +3,12 @@ import axios from 'axios';
 
 
 export default function ProfilePage() {
-    const [profile, setProfile] = useState([])
+    const [profile, setProfile] = useState({userDetails: {}, role: ''})
 
     useEffect(() => {
         async function getUserProfile() {
             var mydata = JSON.parse(localStorage.getItem("myData"))
-            const result = await axios.get('https://localhost:44342/api/Profile/realtor', {
+            const result = await axios.get('https://localhost:44342/api/Profile', {
                 headers: {
                     Authorization: `Bearer ${mydata.tokenString}`
                   }
@@ -23,7 +23,7 @@ export default function ProfilePage() {
     const updateProfile = async e => {
         e.preventDefault();
         var mydata = JSON.parse(localStorage.getItem("myData"))
-        const result = await axios.put(`https://localhost:44342/api/Profile/realtor`, profile, {
+        const result = await axios.put(`https://localhost:44342/api/Profile/${profile.role}`, profile.userDetails, {
             headers: {
                 Authorization: `Bearer ${mydata.tokenString}`
               }
@@ -35,7 +35,8 @@ export default function ProfilePage() {
 
     const onChange = (e) => {    
         e.persist();        
-        setProfile({...profile, [e.target.name]: e.target.value});    
+        setProfile({...profile, userDetails: {...profile.userDetails, [e.target.name]: e.target.value}});
+        console.log(profile)  
     }
 
     return(
@@ -53,7 +54,8 @@ export default function ProfilePage() {
                                     This information will be displayed publicly so be careful what you share.
                                 </p>
                             </div>
-                            <div className="sm:col-span-3">
+                            {profile.role !== "Developer" ?
+                            <><div className="sm:col-span-3">
                             <label htmlFor="firstName" className="block text-sm font-medium text-blue-gray-900">
                                 First name
                             </label>
@@ -63,7 +65,8 @@ export default function ProfilePage() {
                                 id="firstName"
                                 autoComplete="given-name"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.firstName}
+                                defaultValue={profile.userDetails.firstName}
+                                onChange={onChange}
                             />
                             </div>
                             <div className="sm:col-span-3">
@@ -76,36 +79,95 @@ export default function ProfilePage() {
                                 id="lastName"
                                 autoComplete="family-name"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.lastName}
+                                defaultValue={profile.userDetails.lastName}
                                 onChange={onChange}
                             />
+                            </div> </>: <>  
+                            <div className="sm:col-span-3">
+                                <label htmlFor="developerName" className="block text-sm font-medium text-blue-gray-900">
+                                    Developer Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="developerName"
+                                    id="developerName"
+                                    autoComplete="given-name"
+                                    className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                                    defaultValue={profile.userDetails.developerName}
+                                    onChange={onChange} 
+                                />
                             </div>
                             <div className="sm:col-span-3">
-                            <label htmlFor="companyName" className="block text-sm font-medium text-blue-gray-900">
-                                Company
-                            </label>
-                            <input
-                                type="text"
-                                name="companyName"
-                                id="companyName"
-                                className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.companyName}
-                                onChange={onChange}
-                            />
+                                <label htmlFor="website" className="block text-sm font-medium text-blue-gray-900">
+                                    Website
+                                </label>
+                                <input
+                                    type="text"
+                                    name="website"
+                                    id="website"
+                                    className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                                    defaultValue={profile.userDetails.website}
+                                    onChange={onChange}
+                                />
+                            </div> </> 
+                            }
+                            {profile.role === "Realtor" ?
+                            <><div className="sm:col-span-3">
+                                <label htmlFor="companyName" className="block text-sm font-medium text-blue-gray-900">
+                                    Company
+                                </label>
+                                <input
+                                    type="text"
+                                    name="companyName"
+                                    id="companyName"
+                                    className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                                    defaultValue={profile.userDetails.companyName}
+                                    onChange={onChange}
+                                />
                             </div>
                             <div className="sm:col-span-3">
-                            <label htmlFor="languages" className="block text-sm font-medium text-blue-gray-900">
-                                Languages
-                            </label>
-                            <input
-                                type="text"
-                                name="languages"
-                                id="languages"
-                                className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.languages}
-                                onChange={onChange}
-                            />
+                                <label htmlFor="languages" className="block text-sm font-medium text-blue-gray-900">
+                                    Languages
+                                </label>
+                                <input
+                                    type="text"
+                                    name="languages"
+                                    id="languages"
+                                    className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                                    defaultValue={profile.userDetails.languages}
+                                    onChange={onChange}
+                                />
+                            </div></> :
+                            <><div className="sm:col-span-3">
+                                <label htmlFor="email" className="block text-sm font-medium text-blue-gray-900">
+                                    Email address
+                                </label>
+                                <input
+                                    type="text"
+                                    name="email"
+                                    id="email"
+                                    autoComplete="email"
+                                    className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                                    defaultValue={profile.userDetails.email}
+                                    onChange={onChange}
+                                />
                             </div>
+                            <div className="sm:col-span-3">
+                                <label htmlFor="phoneNumber" className="block text-sm font-medium text-blue-gray-900">
+                                    Phone number
+                                </label>
+                                <input
+                                    type="text"
+                                    name="phoneNumber"
+                                    id="phoneNumber"
+                                    autoComplete="tel"
+                                    className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                                    defaultValue={profile.userDetails.phoneNumber}
+                                    onChange={onChange}
+                                />
+                                </div>
+                            </>
+                            }
                             <div className="sm:col-span-6">
                             <label htmlFor="photo" className="block text-sm font-medium text-blue-gray-900">
                                 Photo
@@ -141,6 +203,7 @@ export default function ProfilePage() {
                                 </div>
                             </div>
                             </div>
+                            {profile.role === "Realtor" ?
                             <div className="sm:col-span-6">
                             <label htmlFor="bioText" className="block text-sm font-medium text-blue-gray-900">
                                 Description
@@ -151,15 +214,16 @@ export default function ProfilePage() {
                                 name="bioText"
                                 rows={4}
                                 className="block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.bioText}
+                                defaultValue={profile.userDetails.bioText}
                                 onChange={onChange}
                                 />
                             </div>
                             <p className="mt-3 text-sm text-blue-gray-500">
                                 Brief description for your profile. URLs are hyperlinked.
                             </p>
-                            </div>
+                            </div>: ""}
                         </div>
+                        {profile.role === "Realtor" ?
                         <div className="pt-8 grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
                             <div className="sm:col-span-6">
                             <h2 className="text-xl font-medium text-blue-gray-900">Contact Information</h2>
@@ -177,7 +241,7 @@ export default function ProfilePage() {
                                 id="email"
                                 autoComplete="email"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.email}
+                                defaultValue={profile.userDetails.email}
                                 onChange={onChange}
                             />
                             </div>
@@ -191,7 +255,7 @@ export default function ProfilePage() {
                                 id="phoneNumber"
                                 autoComplete="tel"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.phoneNumber}
+                                defaultValue={profile.userDetails.phoneNumber}
                                 onChange={onChange}
                             />
                             </div>
@@ -204,7 +268,7 @@ export default function ProfilePage() {
                                 name="website"
                                 id="website"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.website}
+                                defaultValue={profile.userDetails.website}
                                 onChange={onChange}
                             />
                             </div>
@@ -217,7 +281,7 @@ export default function ProfilePage() {
                                 name="linkedIn"
                                 id="linkedIn"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.linkedIn}
+                                defaultValue={profile.userDetails.linkedIn}
                                 onChange={onChange}
                             />
                             </div>
@@ -230,7 +294,7 @@ export default function ProfilePage() {
                                 name="youtube"
                                 id="youtube"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.youtube}
+                                defaultValue={profile.userDetails.youtube}
                                 onChange={onChange}
                             />
                             </div>
@@ -243,7 +307,7 @@ export default function ProfilePage() {
                                 name="twitter"
                                 id="twitter"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.twitter}
+                                defaultValue={profile.userDetails.twitter}
                                 onChange={onChange}
                             />
                             </div>
@@ -256,7 +320,7 @@ export default function ProfilePage() {
                                 name="facebook"
                                 id="facebook"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.facebook}
+                                defaultValue={profile.userDetails.facebook}
                                 onChange={onChange}
                             />
                             </div>
@@ -269,11 +333,11 @@ export default function ProfilePage() {
                                 name="instagram"
                                 id="instagram"
                                 className="mt-1 block w-full border-blue-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                                defaultValue={profile.instagram}
+                                defaultValue={profile.userDetails.instagram}
                                 onChange={onChange}
                             />
                             </div>
-                        </div>
+                        </div> : ""}
                         <div className="pt-8 flex justify-end">
                             <button
                             type="button"

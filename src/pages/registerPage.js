@@ -9,6 +9,7 @@ export default function RegisterPage() {
     const [user, setUser] = useState({ Email: '', Password: '', Role: ''})
     let navigate = useNavigate();
     const apiUrl = "https://localhost:44342/api/Auth/register";
+    
     const Register = (e) => {    
         e.preventDefault();
         const data = { Email: user.Email, Password: user.Password, Role: user.Role };
@@ -33,6 +34,7 @@ export default function RegisterPage() {
         e.persist();        
         setUser({...user, [e.target.name]: e.target.value});    
       }
+
     return (
       <>
         <div className="min-h-screen sm:bg-[#b9c3e5]">
