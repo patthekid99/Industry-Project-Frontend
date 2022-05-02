@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/pthree/static/css/main.30d27e71.css",
+    "main.js": "/pthree/static/js/main.f5797fe7.js",
+    "static/js/787.b35412fc.chunk.js": "/pthree/static/js/787.b35412fc.chunk.js",
+    "static/media/logo.jpg": "/pthree/static/media/logo.00008b0d92591459c125.jpg",
+    "index.html": "/pthree/index.html",
+    "main.30d27e71.css.map": "/pthree/static/css/main.30d27e71.css.map",
+    "main.f5797fe7.js.map": "/pthree/static/js/main.f5797fe7.js.map",
+    "787.b35412fc.chunk.js.map": "/pthree/static/js/787.b35412fc.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.30d27e71.css",
+    "static/js/main.f5797fe7.js"
+  ]
+}
