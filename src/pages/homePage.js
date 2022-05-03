@@ -14,7 +14,7 @@ Geocode.setLocationType("ROOFTOP");
 
 export default function TestMap() {
     const [listings, setListings] = useState([])
-    const [coordinates, setCord] = useState([{lat: 0, lng: 0}])
+    const [coordinates, setCord] = useState([])
 
     useEffect(() => {
         async function getListings() {
@@ -30,7 +30,6 @@ export default function TestMap() {
                 }
               )
             }
-            console.log(coordinates)
             setListings(result)
             console.log(result)
         }    
@@ -85,7 +84,7 @@ export default function TestMap() {
                   </div>
                   <div className="hidden md:flex md:w-1/2 lg:w-1/2 my-4 mx-2 shadow-lg" style={{ height: "100vh" }} >
                     <div  style={{ width: "100%", height: "100vh" }} >
-                      <MapContainer center={[49.2827, -123.1207]} zoom={13} scrollWheelZoom={false}>
+                      <MapContainer center={[49.2827, -123.1207]} zoom={10} scrollWheelZoom={false}>
                         <TileLayer
                           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                           url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png" />
