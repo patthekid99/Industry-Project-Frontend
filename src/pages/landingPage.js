@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export default function LandingPage() {
   return (
     <>
-      <div className="min-h-screen bg-[#b9c3e5]">
+      <div className="min-h-screen bg-chairgreen-500">
         <div className=" py-0 sm:py-10">
             <div className="max-w-7xl mx-auto sm:px-0 md:px-8">
               <div className='container mx-auto'>
@@ -24,9 +24,9 @@ export default function LandingPage() {
                         <div className="sm:text-center lg:text-left">
                           <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
                             <span className="block xl:inline">Project P3</span>{' '}
-                            <span className="block text-indigo-600 m:inline">For People, Property and Prosperity</span>
+                            <span className="block text-chairgreen-600 m:inline">For People, Property and Prosperity</span>
                           </h1>
-                          <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                          <p className="mt-3 text-base text-chairgreen-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
                             We provide an opportunity for property developers to get additional display of their projects, buyers to review and rate 
                             developers in addition to being aware of a wider option of presale property and realtors to have greater exposure to potential 
                             clients, all in one space.
@@ -34,19 +34,17 @@ export default function LandingPage() {
                           <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                             <div className="rounded-md shadow">
                               <button
-                                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+                                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 md:py-4 md:text-lg md:px-10"
                               >
-                                 <Link to={"/register"}>Get started</Link> 
-                                
+                                <Link to={"/register"}>Get started</Link> 
                               </button>
                             </div>
                             <div className="mt-3 sm:mt-0 sm:ml-3">
-                              <a
-                                href="#"
-                                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 md:py-4 md:text-lg md:px-10"
+                              <button
+                                className='w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gold-600 hover:bg-gold-700 md:py-4 md:text-lg md:px-10'
                               >
-                                Browse listings
-                              </a>
+                                <Link to={"/home"}>Browse listings</Link> 
+                              </button>
                             </div>
                           </div>
                         </div>
