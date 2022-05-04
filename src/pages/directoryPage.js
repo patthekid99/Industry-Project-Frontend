@@ -290,7 +290,7 @@ export default function DirectoryPage() {
       <footer
         className="
         mb: 
-        position-absolute
+        fixed
         bottom-0
         left-0
         right-0
@@ -298,7 +298,7 @@ export default function DirectoryPage() {
         text-white
         bg-gray-900
         md:
-        position-absolute
+        fixed
         inset-y-0 bottom-0
         text-center
         text-base
