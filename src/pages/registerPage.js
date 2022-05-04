@@ -8,15 +8,17 @@ export default function RegisterPage() {
 
     const [user, setUser] = useState({ Email: '', Password: '', Role: ''})
     let navigate = useNavigate();
-    const apiUrl = "https://localhost:44342/api/Auth/register";
+    const apiUrl = "https://localhost:44340/api/Auth/register";
     
     const Register = (e) => {    
         e.preventDefault();
         const data = { Email: user.Email, Password: user.Password, Role: user.Role };
+
+        console.log(data)
         axios.post(apiUrl, data)
         .then((result) => {
             console.log(result.data);
-            const serializedState = JSON.stringify(result.data)
+            const serializedState =  JSON.stringify(result.data)
             var a = localStorage.setItem('myData', serializedState)
             console.log("A:",a)
             if(result.data.statusCode === "Result is valid. New user has been created")

@@ -8,7 +8,7 @@ export default function ProfilePage() {
     useEffect(() => {
         async function getUserProfile() {
             var mydata = JSON.parse(localStorage.getItem("myData"))
-            const result = await axios.get('https://localhost:44342/api/Profile', {
+            const result = await axios.get('https://localhost:44340/api/Profile', {
                 headers: {
                     Authorization: `Bearer ${mydata.tokenString}`
                   }
@@ -23,11 +23,12 @@ export default function ProfilePage() {
     const updateProfile = async e => {
         e.preventDefault();
         var mydata = JSON.parse(localStorage.getItem("myData"))
-        const result = await axios.put(`https://localhost:44342/api/Profile/${profile.role}`, profile.userDetails, {
+        const result = await axios.put(`https://localhost:44340/api/Profile/${profile.role}`, profile.userDetails, {
             headers: {
                 Authorization: `Bearer ${mydata.tokenString}`
               }
         })
+        console.log(profile.role)
         const resultProfile = result.data
         setProfile(resultProfile)
         console.log(resultProfile)

@@ -18,7 +18,7 @@ export default function TestMap() {
 
     useEffect(() => {
         async function getListings() {
-            const results = await axios.get('https://localhost:44342/api/Test')
+            const results = await axios.get('https://localhost:44340/api/Test')
             const result = results.data
             for(let i = 0; i < result.length; i++) {
               Geocode.fromAddress(result[i].streetNum + " " + result[i].streetName + " " + result[i].city + " " + result[i].postalCode).then(
