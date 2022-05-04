@@ -7,3 +7,4 @@ Steps to remake this project
 5. npm install react-icons
 6. npm install axios
 7. npm start
+8. npm install --save @statikly/funk (needed for tabs on the profile/directory page)
