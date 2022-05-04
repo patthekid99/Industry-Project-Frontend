@@ -54,7 +54,10 @@ export default function DirectoryPage() {
         md:ml-5 mt-5 h-3/4
         "
       >
-        <Sidebar></Sidebar>
+        <Sidebar
+          className="
+          sm: hidden"
+        ></Sidebar>
         <div
           className="
           left-column hidden 
@@ -63,7 +66,7 @@ export default function DirectoryPage() {
           <h2 className="pb-5">Directory</h2>
           <p className="text-sm mb-2">Search through {data.length} realtors</p>
           <div className="relative text-amber-400 focus-within:text-gray-400">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-2">
+            <span className="absolute inset-y-0 left-0 flex items-center">
               <button
                 type="submit"
                 className="
@@ -92,7 +95,7 @@ export default function DirectoryPage() {
               type="text"
               name="q"
               className="
-              py-2 text-sm 
+              py-2 pl-8 text-sm 
               text-white 
               bg-gray-900 
               rounded-md 
