@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import data from "../MOCK_DATA.json";
 import { axios } from "axios";
 import { FaHouseUser } from "react-icons/fa";
+import Sidebar from "../components/Sidebar";
 /*
 screens: {
       mb: "376px",
@@ -20,7 +21,7 @@ Scheme that Steve wants:
 export default function DirectoryPage() {
   const [realtor, setRealtor] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-
+  /*
   const [realtors, setRealtors] = useState([]);
 
   useEffect(() => {
@@ -41,6 +42,7 @@ export default function DirectoryPage() {
     getRealtors();
   }, []);
 
+*/
   function displayProfile(realtor) {
     setRealtor(realtor);
   }
@@ -52,6 +54,7 @@ export default function DirectoryPage() {
         md:ml-5 mt-5 h-3/4
         "
       >
+        <Sidebar></Sidebar>
         <div
           className="
           left-column hidden 
@@ -93,7 +96,6 @@ export default function DirectoryPage() {
               text-white 
               bg-gray-900 
               rounded-md 
-              pl-10 
               focus:outline-none 
               focus:bg-white 
               focus:text-amber-400"
@@ -281,6 +283,7 @@ export default function DirectoryPage() {
           </div>
         </div>
       </div>
+
       <footer
         className="
         mb: 
