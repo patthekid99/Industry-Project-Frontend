@@ -6,6 +6,8 @@ import HomePage from '../pages/homePage';
 import DirectoryPage from '../pages/directoryPage';
 import MyListingsPage from '../pages/myListingsPage';
 import ProfilePage from '../pages/profilePage';
+import Header from '../components/header';
+import { Fragment } from 'react';
 
 
 
