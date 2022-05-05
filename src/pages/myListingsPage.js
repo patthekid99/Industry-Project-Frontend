@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
 import { useState, useEffect } from 'react';
 // import axios from 'axios';
 import data from '../Listing_MOCK_DATA.json'
@@ -136,19 +132,4 @@ export default function MyListingsPage() {
         </div>
       </>
     );
-<<<<<<< Updated upstream
 }
-=======
-}
-=======
-import react from "react";
-
-export default function MyListingsPage() {
-  return (
-    <div>
-      <h2>MY LISTINGS PAGE</h2>
-    </div>
-  );
-}
->>>>>>> b6f675461c7624c5d84ec2b0fbd7fa858e48cf7e
->>>>>>> Stashed changes
