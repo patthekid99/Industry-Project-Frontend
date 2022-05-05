@@ -3,17 +3,12 @@ import axios from "axios";
 import { ChevronLeftIcon } from "@heroicons/react/solid";
 import { RadioGroup } from "@headlessui/react";
 
-const realtorKeys = {
+const devKeys = {
+  developerName: "Developer Name",
+  phoneNumber: "Phone Number",
   email: "Email",
-  companyName: "Company Name",
-  phoneNumber: "Phone",
-  avgStarRating: "Average Rating",
   website: "Website",
-  linkedIn: "LinkedIn",
-  twitter: "Twitter",
-  youtube: "Youtube",
-  instagram: "Instagram",
-  facebook: "Facebook",
+  avgStarRating: "Average Star Rating",
 };
 
 const memoryOptions = [
@@ -28,7 +23,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function FindRealtor() {
+export default function FindDeveloper() {
   const [state, setState] = useState({
     showContacts: true,
     realtors: [],
@@ -40,21 +35,21 @@ export default function FindRealtor() {
   });
 
   useEffect(() => {
-    async function getRealtors() {
+    async function getDevelopers() {
       const results = await axios.get(
-        "https://localhost:44340/api/directory/realtors"
+        "https://localhost:44340/api/directory/developers"
       );
       const result = results.data;
-      setState({ ...state, realtors: result, realtorSelected: result[0] });
+      setState({ ...state, developers: result, developersSelected: result[0] });
       console.log(result);
     }
-    getRealtors();
+    getDevelopers();
   }, []);
 
   const getReviews = async () => {
     var mydata = JSON.parse(localStorage.getItem("myData"));
     const results = await axios.get(
-      `https://localhost:44340/api/review/realtor/${state.realtorSelected.realtorId}`,
+      `https://localhost:44340/api/review/developers/${state.developersSelected.developerId}`,
       {
         headers: {
           Authorization: `Bearer ${mydata.tokenString}`,
@@ -76,7 +71,7 @@ export default function FindRealtor() {
     var mydata = JSON.parse(localStorage.getItem("myData"));
     const data = { comment: state.comment, starRating: state.starRating };
     const results = await axios.post(
-      `https://localhost:44340/api/review/realtor/${state.realtorSelected.realtorId}`,
+      `https://localhost:44340/api/review/${state.developersSelected.developerId}`,
       data,
       {
         headers: {
@@ -102,7 +97,7 @@ export default function FindRealtor() {
             }`}
           >
             <div className="search-box p-4 flex-none">
-              <form onsubmit="">
+              <form onSubmit="">
                 <div className="relative">
                   <label>
                     <input
@@ -138,7 +133,7 @@ export default function FindRealtor() {
                   <div className="w-16 h-16 relative flex flex-shrink-0">
                     <img
                       className="shadow-md rounded-full w-full h-full object-cover"
-                      src={r.profilePic}
+                      src={r.logo}
                       alt=""
                     />
                   </div>
@@ -331,10 +326,10 @@ export default function FindRealtor() {
                   </>
                 ) : (
                   <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                    {Object.keys(realtorKeys).map((field) => (
+                    {Object.keys(devKeys).map((field) => (
                       <div key={field} className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500">
-                          {realtorKeys[field]}
+                          {devKeys[field]}
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900">
                           {state.realtorSelected[field]}

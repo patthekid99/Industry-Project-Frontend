@@ -5,10 +5,11 @@ import logo from "../images/logo.jpg";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 
+
 const navigation = [
   { name: "HOME", link: "/home", current: true },
   { name: "FIND A REALTOR", link: "/realtordirectory", current: false },
-  {name: "FIND A DEVELOPER", link: "/developerdirectory", current: false},
+  { name: "FIND A DEVELOPER", link: "/developerdirectory", current: false },
   { name: "MY LISTINGS", link: "/listings", current: false },
 ];
 
