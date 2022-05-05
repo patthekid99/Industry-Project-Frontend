@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Geocode from "react-geocode";
 import { Dropdown } from "../components/Dropdown";
+import { Link } from 'react-router-dom';
 
 const APIKEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
 const baseURL = 'https://localhost:44340/api/home/'
@@ -21,21 +22,18 @@ export default function TestMap() {
 
     useEffect(() => {
         async function getListings() {
-            // const results = await axios.get('https://localhost:44342/api/Test')
             const results = await axios.get(baseURL)
             const result = results.data
-
-            // for(let i = 0; i < result.length; i++) {
-            //   Geocode.fromAddress(result[i].streetNum + " " + result[i].streetName + " " + result[i].city + " " + result[i].postalCode).then(
-            //     (response) => {
-            //     const { lat, lng } = response.results[0].geometry.location;
-            //     result[i].lat = lat
-            //     result[i].lng = lng
-            //     setCord([...coordinates, {lat: lat, lng: lng}])
-            //     }
-            //   )
-            // }
-
+            for(let i = 0; i < result.length; i++) {
+              Geocode.fromAddress(result[i].streetNum + " " + result[i].streetName + " " + result[i].city + " " + result[i].postalCode).then(
+                (response) => {
+                const { lat, lng } = response.results[0].geometry.location;
+                result[i].lat = lat
+                result[i].lng = lng
+                setCord([...coordinates, {lat: lat, lng: lng}])
+                }
+              )
+            }
             setListings(result)
             console.log(result)
         }    
@@ -48,12 +46,10 @@ export default function TestMap() {
       ...new Set(listings.map((listing) => listing.city)),
     ];
 
-
     const Cities = distinctCities.map((city) => ({
       label: city,
       value: city,
     }));
-
 
     function toggleFilter(show) {
       if (show == false) {
@@ -75,11 +71,11 @@ export default function TestMap() {
 
     return(
         <>
-        <div className="min-h-full py-10 bg-gray-100">
+        <div className="min-h-full py-10 bg-gray-100 ">
           <main>
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 sm:rounded-[24px] bg-white">
               <div className="flex mb-4">
-                <div className='w-full md:w-1/2 gap-4 flex flex-wrap' >
+                <div className='w-full md:w-1/2 gap-4 flex flex-wrap'>
                   <form className="w-full flex pt-4 justify-center" action="#" method="GET">
                     <label htmlFor="search-field" className="sr-only">Search</label>
                       <div className="relative w-1/2 text-gray-400 focus-within:text-gray-600">
@@ -108,23 +104,22 @@ export default function TestMap() {
                       {show ? (
                         <>
                             <Dropdown onChange={(event) => {filterByCity(event.value)}} placeholder="Filter by City" options={Cities}/>
-                        </>) : null}
-                      
+                        </>) : null}                     
                     </div>
-                    <div className='w-full min-h-screen gap-6 flex-wrap flex justify-center'>
+                    <div className='w-full md:max-h-screen gap-6 flex-wrap flex justify-center overflow-auto pb-4'>
 
                         {listings.map(i => (
                             <div className="w-64 p-2 bg-white rounded-xl transform transition-all shadow-lg">
                                 <img className="h-40 object-cover rounded-xl" src={i.projectImage} alt="" />
-                                <p>{i.projectName}</p>
-                                <p>{i.city}</p>
-                                <p>Status: {i.projectStatus}</p>
                                 <div className="p-2">
-                                    {/* <h2 className="font-bold text-lg mb-2 ">{i.developer.developerName}</h2> */}
-                                    <p className="text-sm text-gray-600">It gives you the best of Central City and its lifestyle, the parks and recreation centre are next door, its steps to the SkyTrain</p>
+                                  <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{i.developer.developerName}</h2>
+                                  <h2 className="font-bold text-lg mb-2 ">{i.projectName}</h2>
+                                  <p className="text-sm text-gray-600">{i.projectDescription}</p>
                                 </div>
                                 <div className="m-2">
-                                    <a role='button' href='#' className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Learn More</a>
+                                  <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500">
+                                    <Link to={`/listings/${i.projectId}`}>Read More</Link>
+                                  </button>
                                 </div>
                             </div>
                         ))}
@@ -142,7 +137,16 @@ export default function TestMap() {
                             element.lat && element.lng && element.developer &&
                               <Marker position={[element.lat, element.lng]}>
                                 <Popup>
-                                  {element.developer.developerName}
+                                <div className="w-64 p-2 bg-white rounded-xl transform transition-all shadow-lg">
+                                <img className="h-40 object-cover rounded-xl" src={element.projectImage} alt="" />
+                                <div className="p-2">
+                                    <h2 className="font-bold text-lg mb-2 ">{element.developer.developerName}</h2>
+                                    <p className="text-sm text-gray-600">It gives you the best of Central City and its lifestyle, the parks and recreation centre are next door, its steps to the SkyTrain</p>
+                                </div>
+                                <div className="m-2">
+                                    <a role='button' href='#' className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500">Learn More</a>
+                                </div>
+                              </div>
                                 </Popup>
                               </Marker>
                             ))             

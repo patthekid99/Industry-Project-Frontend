@@ -7,7 +7,8 @@ import axios from "axios";
 
 const navigation = [
   { name: "HOME", link: "/home", current: true },
-  { name: "FIND A REALTOR", link: "/directory", current: false },
+  { name: "FIND A REALTOR", link: "/realtordirectory", current: false },
+  {name: "FIND A DEVELOPER", link: "/developerdirectory", current: false},
   { name: "MY LISTINGS", link: "/listings", current: false },
 ];
 
