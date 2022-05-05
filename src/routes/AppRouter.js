@@ -6,6 +6,7 @@ import HomePage from '../pages/homePage';
 import DirectoryPage from '../pages/directoryPage';
 import MyListingsPage from '../pages/myListingsPage';
 import ProfilePage from '../pages/profilePage';
+import NewListingPage from '../pages/newListingPage';
 
 
 
@@ -19,6 +20,7 @@ export default function AppRouter() {
             <Route path='/directory' element={<DirectoryPage />} />
             <Route path='/listings' element={<MyListingsPage />} />
             <Route path='/profile' element={<ProfilePage />} />  
+            <Route path='/newlisting' element={<NewListingPage />} />
         </Routes>
     )
 }
