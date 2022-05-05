@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import data from "../MOCK_DATA.json";
-import { axios } from "axios";
+// import data from "../MOCK_DATA.json";
+import { Dropdown } from "../components/Dropdown";
+import  axios  from "axios";
 import { FaHouseUser } from "react-icons/fa";
 import Sidebar from "../components/Sidebar";
 /*
@@ -19,32 +20,145 @@ Scheme that Steve wants:
 - Hero image/Profile background is TBD
 */
 export default function DirectoryPage() {
-  const [realtor, setRealtor] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
-  /*
-  const [realtors, setRealtors] = useState([]);
+  const [token, setToken] = useState(""); // Auth Token
+  const [show, setShow] = useState(false); // Filter Toggle hide/show
+  const [realtor, setRealtor] = useState({}); // Getting single realtor details on click
+  const [realtors, setRealtors] = useState([]); // Getting all realtors from API
+  const [languages, setLanguages] = useState([]); // Getting all languages from API
+  const [realtorLang, setRealtorLang] = useState([{}]); // Used to filter realtors by specific language
+  
+  const baseURL = "https://localhost:44340/api/directory/realtors/"
 
   useEffect(() => {
     async function getRealtors() {
       var mydata = JSON.parse(localStorage.getItem("myData"));
+      setToken(mydata.tokenString);
       const result = await axios.get(
-        "https://localhost:44340/api/directory/realtors/",
+        baseURL,
         {
           headers: {
-            Authorization: `Bearer ${mydata.tokenString}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
+      const res_languages = await axios.get(
+        "https://localhost:44340/api/language/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const single_realtor = await axios.get(
+        baseURL+(result.data[0].realtorId),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      var langlbah = [];
+      const singleRealtor = single_realtor.data;
+      setRealtor(singleRealtor);
+      console.log(singleRealtor);
+
+      single_realtor.data.realtorLanguages.forEach((l) => {
+        const something = res_languages.data.find(
+          (lang) => lang.languageId === l.languageId
+        );
+        langlbah.push(something);
+      });
+
+      setRealtorLang(langlbah);
+      const resultLanguages = res_languages.data;
       const resultRealtors = result.data;
+      setLanguages(resultLanguages);
       setRealtors(resultRealtors);
-      console.log(resultRealtors);
     }
     getRealtors();
   }, []);
 
-*/
-  function displayProfile(realtor) {
-    setRealtor(realtor);
+  const companies = [
+    ...new Set(realtors.map((realtor) => realtor.companyName)),
+  ];
+
+  const rating = [1, 2, 3, 4, 5];
+
+  const Languages = languages.map((language) => ({
+    label: language.languageName,
+    value: language.languageId,
+  }));
+  const Companies = companies.map((company) => ({
+    label: company,
+    value: company,
+  }));
+
+  async function displayProfile(id) {
+    const single_realtor = await axios.get(
+      baseURL+id,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    var langlbah = [];
+    const singleRealtor = single_realtor.data;
+    setRealtor(singleRealtor);
+    single_realtor.data.realtorLanguages.forEach((l) => {
+      const something = languages.find(
+        (lang) => lang.languageId === l.languageId
+      );
+      langlbah.push(something);
+    });
+
+    setRealtorLang(langlbah);
+  }
+
+  function toggleFilter(show) {
+    if (show == false) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }
+
+  async function filterByLanguage(id) {
+
+    const result = await axios.get(baseURL+`lang/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setRealtors(result.data);
+    if (result.data.length > 0) {
+      displayProfile(result.data[0]);
+    }
+  }
+  async function searchRealtor(query) {
+    var result;
+    if (!query) {
+      result = await axios.get(
+        baseURL,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } else {
+      result = await axios.get(baseURL+`name/${query}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
+
+    setRealtors(result.data);
+    if (result.data.length > 0) {
+      displayProfile(result.data[0]);
+    }
   }
   return (
     <>
@@ -64,16 +178,18 @@ export default function DirectoryPage() {
           sm:block mr-5"
         >
           <h2 className="pb-5">Directory</h2>
-          <p className="text-sm mb-2">Search through {data.length} realtors</p>
+          <p className="text-sm mb-2">Search through {realtors.length} realtors</p>
           <div className="relative text-amber-400 focus-within:text-gray-400">
             <span className="absolute inset-y-0 left-0 flex items-center">
-              <button
+            <button
                 type="submit"
                 className="
                 p-1 
                 focus:outline-none 
                 focus:shadow-outline
-                rounded-l-md"
+                rounded-l-md
+                dropdown-toggle"
+                onClick={() => toggleFilter(show)}
               >
                 <svg
                   fill="none"
@@ -90,7 +206,7 @@ export default function DirectoryPage() {
             </span>
             <input
               onChange={(event) => {
-                setSearchTerm(event.target.value);
+                searchRealtor(event.target.value);
               }}
               type="text"
               name="q"
@@ -105,6 +221,27 @@ export default function DirectoryPage() {
               placeholder="Search for a realtor"
               autoComplete="off"
             />
+          </div>
+          <div className="filter-container">
+            {show ? (
+              <form>
+                <Dropdown
+                  onChange={(event) => {
+                    filterByLanguage(event.value);
+                  }}
+                  placeholder="Filter by Language"
+                  options={Languages}
+                />
+                {/* <Dropdown
+                  onChange={(event) => {
+                    setFilterTerm([...filterTerm, event.value]);
+                  }}
+                  placeholder="Filter by Company"
+                  options={Companies}
+                /> */}
+                {/* <Dropdown placeholder="Filter by Rating" options={Rating} /> */}
+              </form>
+            ) : null}
           </div>
           <div
             className="
@@ -130,25 +267,11 @@ export default function DirectoryPage() {
               lg: h-5/6
               "
               >
-                {data
-                  .filter((realtor) => {
-                    if (searchTerm == "") {
-                      return realtor;
-                    } else if (
-                      realtor.first_name
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase()) ||
-                      realtor.last_name
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())
-                    ) {
-                      return realtor;
-                    }
-                  })
-                  .map((realtor) => (
+                {realtors &&
+                  realtors.map((realtor) => (
                     <li key={realtor.email} className="py-1">
-                      <button onClick={() => displayProfile(realtor)}>
-                        {realtor.first_name} {realtor.last_name}
+                      <button onClick={() => displayProfile(realtor.realtorId)}>
+                        {realtor.firstName} {realtor.lastName}
                       </button>
                     </li>
                   ))}
@@ -187,7 +310,7 @@ export default function DirectoryPage() {
           font-bold
           text-2xl"
             >
-              {realtor.first_name} {realtor.last_name}
+              {realtor.firstName} {realtor.lastName}
             </h1>
             <img
               className="
@@ -197,7 +320,7 @@ export default function DirectoryPage() {
             sm: h-20 w-20 top-40
             md: h-24 w-24 top-40
             lg: h-28 w-28 top-40 ml-5"
-              src={realtor.photo}
+              src={realtor.profilePic}
             ></img>
             <p
               className="
@@ -218,7 +341,7 @@ export default function DirectoryPage() {
             >
               <b>Phone: </b>
               <br></br>
-              {realtor.phonenumber}
+              {realtor.phoneNumber}
             </p>
             <p
               className="
@@ -236,7 +359,7 @@ export default function DirectoryPage() {
             >
               <b>Company:</b>
               <br></br>
-              {realtor.company}
+              {realtor.companyName}
             </p>
             <p
               className="
@@ -263,7 +386,7 @@ export default function DirectoryPage() {
             >
               <b>Rating: </b>
               <br></br>
-              {realtor.starRating}
+              {realtor.avgStarRating}
             </p>
             <p
               className="
@@ -281,7 +404,7 @@ export default function DirectoryPage() {
             >
               <b>Languages: </b>
               <br></br>
-              {realtor.primary_language}, {realtor.secondary_language}
+              {realtorLang.map((l) => l.languageName)}
             </p>
           </div>
         </div>
