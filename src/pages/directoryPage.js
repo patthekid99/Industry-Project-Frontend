@@ -4,16 +4,18 @@ import axios from "axios";
 
 export default function DirectoryPage() {
   const [realtor, setRealtor] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
   const [realtors, setRealtors] = useState([]);
   const [show, setShow] = useState(false);
-  const [filterTerm, setFilterTerm] = useState([]);
+  // const [languageQuery, setLanguageQuery] = useState({});
   const [languages, setLanguages] = useState([]);
   const [realtorLang, setRealtorLang] = useState([{}]);
+  const [token, setToken] = useState("");
 
   useEffect(() => {
     async function getRealtors() {
       var mydata = JSON.parse(localStorage.getItem("myData"));
+      setToken(mydata.tokenString);
       const result = await axios.get(
         "https://localhost:44340/api/directory/realtors/",
         {
@@ -38,21 +40,21 @@ export default function DirectoryPage() {
             Authorization: `Bearer ${mydata.tokenString}`,
           },
         }
-      )
-      var langlbah=[]
+      );
+      var langlbah = [];
       const singleRealtor = single_realtor.data;
       setRealtor(singleRealtor);
 
       console.log(singleRealtor);
 
+      single_realtor.data.realtorLanguages.forEach((l) => {
+        const something = res_languages.data.find(
+          (lang) => lang.languageId === l.languageId
+        );
+        langlbah.push(something);
+      });
 
-      single_realtor.data.realtorLanguages.forEach((l) =>{
-      const something = (res_languages.data.find(lang => lang.languageId === l.languageId))
-      langlbah.push(something)
-
-    })
-    
-      setRealtorLang(langlbah)
+      setRealtorLang(langlbah);
       const resultLanguages = res_languages.data;
       const resultRealtors = result.data;
       setLanguages(resultLanguages);
@@ -67,16 +69,35 @@ export default function DirectoryPage() {
 
   const rating = [1, 2, 3, 4, 5];
 
-  const Languages = languages.map((language) => ({ label: language.languageName, value: language.languageId }));
+  const Languages = languages.map((language) => ({
+    label: language.languageName,
+    value: language.languageId,
+  }));
   const Companies = companies.map((company) => ({
     label: company,
     value: company,
   }));
 
+  async function displayProfile(id) {
+    const single_realtor = await axios.get(
+      `https://localhost:44340/api/directory/realtors/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    var langlbah = [];
+    const singleRealtor = single_realtor.data;
+    setRealtor(singleRealtor);
+    single_realtor.data.realtorLanguages.forEach((l) => {
+      const something = languages.find(
+        (lang) => lang.languageId === l.languageId
+      );
+      langlbah.push(something);
+    });
 
-  async function displayProfile(realtor) {
-    setRealtor(realtor);  
-
+    setRealtorLang(langlbah);
   }
 
   function toggleFilter(show) {
@@ -87,6 +108,44 @@ export default function DirectoryPage() {
     }
   }
 
+  async function filterByLanguage(id) {
+    const url = "https://localhost:44340/api/directory/realtors/lang/" + id;
+    const result = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setRealtors(result.data);
+    if (result.data.length > 0) {
+      displayProfile(result.data[0]);
+    }
+  }
+  async function searchRealtor(query) {
+    var result;
+    if (!query) {
+      result = await axios.get(
+        "https://localhost:44340/api/directory/realtors/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } else {
+      const url =
+        "https://localhost:44340/api/directory/realtors/name/" + query;
+      result = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
+
+    setRealtors(result.data);
+    if (result.data.length > 0) {
+      displayProfile(result.data[0]);
+    }
+  }
   return (
     <>
       <div
@@ -132,7 +191,7 @@ export default function DirectoryPage() {
             </span>
             <input
               onChange={(event) => {
-                setSearchTerm(event.target.value);
+                searchRealtor(event.target.value);
               }}
               type="text"
               name="q"
@@ -153,17 +212,19 @@ export default function DirectoryPage() {
             {show ? (
               <form>
                 <Dropdown
-                onChange={(event) => {
-                  setFilterTerm([...filterTerm, event.value]);
-                }}
+                  onChange={(event) => {
+                    filterByLanguage(event.value);
+                  }}
                   placeholder="Filter by Language"
                   options={Languages}
                 />
-                <Dropdown 
+                {/* <Dropdown
                   onChange={(event) => {
                     setFilterTerm([...filterTerm, event.value]);
                   }}
-                  placeholder="Filter by Company" options={Companies} />
+                  placeholder="Filter by Company"
+                  options={Companies}
+                /> */}
                 {/* <Dropdown placeholder="Filter by Rating" options={Rating} /> */}
               </form>
             ) : null}
@@ -184,22 +245,10 @@ export default function DirectoryPage() {
               h-full
               "
               >
-                {realtors
-                  .filter((realtor) => {
-                    if (realtor.firstName.toLowerCase().includes(searchTerm.toLowerCase()) || realtor.lastName.toLowerCase().includes(searchTerm.toLowerCase())){
-                      if(!filterTerm){
-                        return realtor
-                      } else {
-                        return realtor
-                      }
-                      // else if (realtor.languages.includes(filterTerm) || realtor.companyName.includes(filterTerm)){
-                      //   return realtor
-                      // }
-                    } 
-                  })
-                  .map((realtor) => (
+                {realtors &&
+                  realtors.map((realtor) => (
                     <li key={realtor.email} className="py-1">
-                      <button onClick={() => displayProfile(realtor)}>
+                      <button onClick={() => displayProfile(realtor.realtorId)}>
                         {realtor.firstName} {realtor.lastName}
                       </button>
                     </li>
@@ -323,11 +372,8 @@ export default function DirectoryPage() {
             >
               <b>Languages: </b>
               <br></br>
-       
-              {realtorLang.map((l) => (
-                l.languageName
-              )
-              )}
+
+              {realtorLang.map((l) => l.languageName)}
             </p>
           </div>
         </div>
