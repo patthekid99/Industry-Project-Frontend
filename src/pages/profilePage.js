@@ -7,7 +7,7 @@ export default function ProfilePage() {
   useEffect(() => {
     async function getUserProfile() {
       var mydata = JSON.parse(localStorage.getItem("myData"));
-      const result = await axios.get("https://localhost:44342/api/Profile", {
+      const result = await axios.get("https://localhost:44340/api/Profile", {
         headers: {
           Authorization: `Bearer ${mydata.tokenString}`,
         },

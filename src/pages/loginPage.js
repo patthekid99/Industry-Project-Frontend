@@ -8,7 +8,7 @@ export default function LoginPage(props) {
 
     const [user, setUser] = useState({ Email: '', Password: ''})
     let navigate = useNavigate();
-    const apiUrl = "https://localhost:44342/api/auth/login";
+    const apiUrl = "https://localhost:44340/api/auth/login";
 
     const Login = (e) => {    
       e.preventDefault();

@@ -6,9 +6,9 @@ import HomePage from "../pages/homePage";
 import DirectoryPage from "../pages/directoryPage";
 import MyListingsPage from "../pages/myListingsPage";
 import ProfilePage from "../pages/profilePage";
-import Header from "../components/header";
 import Tabs from "../Tabs/Tabs";
-import { Fragment } from "react";
+import FindRealtor from "../pages/findRealtorPage";
+import ListingDetails from "../pages/listingDetailsPage";
 
 export default function AppRouter() {
   return (
@@ -17,8 +17,9 @@ export default function AppRouter() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/home" element={<HomePage />} />
-      <Route path="/directory" element={<DirectoryPage />} />
+      <Route path="/directory" element={<FindRealtor />} />
       <Route path="/listings" element={<MyListingsPage />} />
+      <Route path="/listings/:id" element={<ListingDetails />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/tabs" element={<Tabs />} />
     </Routes>

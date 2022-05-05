@@ -27,7 +27,7 @@ export default function Header() {
     async function getUser() {
       var mydata = JSON.parse(localStorage.getItem("myData"));
       await axios
-        .get("https://localhost:44342/api/Profile", {
+        .get("https://localhost:44340/api/Profile", {
           headers: {
             Authorization: `Bearer ${mydata.tokenString}`,
           },

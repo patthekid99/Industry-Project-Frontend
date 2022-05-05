@@ -8,7 +8,7 @@ export default function RegisterPage() {
 
     const [user, setUser] = useState({ Email: '', Password: '', Role: ''})
     let navigate = useNavigate();
-    const apiUrl = "https://localhost:44342/api/Auth/register";
+    const apiUrl = "https://localhost:44340/api/Auth/register";
     
     const Register = (e) => {    
         e.preventDefault();
