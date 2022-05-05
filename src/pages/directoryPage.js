@@ -21,11 +21,11 @@ Scheme that Steve wants:
 */
 export default function DirectoryPage() {
   const [token, setToken] = useState(""); // Auth Token
-  const [show, setShow] = useState(false); // Filter Toggle hide/show
+  const [show, setShow] = useState(false); // Filter Toggle hide/ show
   const [realtor, setRealtor] = useState({}); // Getting single realtor details on click
   const [realtors, setRealtors] = useState([]); // Getting all realtors from API
   const [languages, setLanguages] = useState([]); // Getting all languages from API
-  const [realtorLang, setRealtorLang] = useState([{}]); // Used to filter realtors by specific language
+  const [realtorLang, setRealtorLang] = useState([{}]); // Single Realtor languages
   
   const baseURL = "https://localhost:44340/api/directory/realtors/"
 
@@ -49,7 +49,6 @@ export default function DirectoryPage() {
           },
         }
       );
-
       const single_realtor = await axios.get(
         baseURL+(result.data[0].realtorId),
         {
@@ -61,7 +60,6 @@ export default function DirectoryPage() {
       var langlbah = [];
       const singleRealtor = single_realtor.data;
       setRealtor(singleRealtor);
-      console.log(singleRealtor);
 
       single_realtor.data.realtorLanguages.forEach((l) => {
         const something = res_languages.data.find(
@@ -124,8 +122,8 @@ export default function DirectoryPage() {
     }
   }
 
-  async function filterByLanguage(id) {
 
+  async function filterByLanguage(id) {
     const result = await axios.get(baseURL+`lang/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -224,6 +222,7 @@ export default function DirectoryPage() {
           </div>
           <div className="filter-container">
             {show ? (
+              <>
               <form>
                 <Dropdown
                   onChange={(event) => {
@@ -241,6 +240,8 @@ export default function DirectoryPage() {
                 /> */}
                 {/* <Dropdown placeholder="Filter by Rating" options={Rating} /> */}
               </form>
+              <button>Remove Filters</button>
+              </>
             ) : null}
           </div>
           <div
@@ -410,7 +411,7 @@ export default function DirectoryPage() {
         </div>
       </div>
 
-      <footer
+      {/* <footer
         className="
         mb: 
         fixed
@@ -437,7 +438,7 @@ export default function DirectoryPage() {
       "
       >
         © 2022 Copyright
-      </footer>
+      </footer> */}
     </>
   );
 }
