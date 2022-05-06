@@ -23,6 +23,7 @@ export default function AppRouter() {
       <Route path="/listings/:id" element={<ListingDetails />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/tabs" element={<Tabs />} />
+      <Route path="/newlisting" element={<NewListingPage />} />
     </Routes>
   );
 }
