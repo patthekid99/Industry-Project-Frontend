@@ -19,10 +19,11 @@ export default function AppRouter() {
       <Route path="/home" element={<HomePage />} />
       <Route path="/realtordirectory" element={<DirectoryPage />} />
       <Route path="/developerdirectory" element={<DirectoryPage />} />
-      <Route path="/listings" element={<MyListingsPage />} />
+      {/* <Route path="/listings" element={<MyListingsPage />} /> */}
       <Route path="/listings/:id" element={<ListingDetails />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/tabs" element={<Tabs />} />
+      <Route path="/newlisting" element={<NewListingPage />} />
     </Routes>
   );
 }
