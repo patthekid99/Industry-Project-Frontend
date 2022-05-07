@@ -11,7 +11,7 @@ Geocode.setLocationType("ROOFTOP");
 
 export default function ListingDetails() {
     const { id } = useParams()
-    const [listing, setListing] = useState({ developer: {} });
+    const [listing, setListing] = useState({ developer: {}, project: {} });
     const [marker, setMarker] = useState({ lat: 49.2827, lng: -123.1207 });
 
     useEffect(() => {
@@ -20,17 +20,17 @@ export default function ListingDetails() {
         const result = results.data[0];
         console.log(result);
         Geocode.fromAddress(
-            result.streetNum +
+            result.project.streetNum +
             " " +
-            result.streetName +
+            result.project.streetName +
             " " +
-            result.city +
+            result.project.city +
             " " +
-            result.postalCode
+            result.project.postalCode
         ).then((response) => {
             const { lat, lng } = response.results[0].geometry.location;
-            result.lat = lat;
-            result.lng = lng;
+            result.project.lat = lat;
+            result.project.lng = lng;
             setMarker({ lat: lat, lng: lng });
         });
         setListing(result);
@@ -53,25 +53,25 @@ export default function ListingDetails() {
                             {listing.developer.developerName}
                         </h2>
                         <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
-                            {listing.projectName}
+                            {listing.project.projectName}
                         </h1>
                         <p className="leading-relaxed mb-4">
-                           {listing.projectDescription}
+                           {listing.project.projectDescription}
                         </p>
                         <div className="flex border-t border-gray-200 py-2">
                             <span className="text-gray-500">Address</span>
                             <span className="ml-auto text-gray-900">
-                            {listing.streetNum +
+                            {listing.project.streetNum +
                                 " " +
-                                listing.streetName +
+                                listing.project.streetName +
                                 ", " +
-                                listing.city}
+                                listing.project.city}
                             </span>
                         </div>
                         <div className="flex border-t border-b mb-6 border-gray-200 py-2">
                             <span className="text-gray-500">Project Status</span>
                             <span className="ml-auto text-gray-900">
-                            {listing.projectStatus}
+                            {listing.project.projectStatus}
                             </span>
                         </div>
                         <div className="flex pb-2" style={{ height: "30vh" }}>
@@ -92,7 +92,7 @@ export default function ListingDetails() {
                         <img
                         alt="ecommerce"
                         className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
-                        src={listing.projectImage}
+                        src={listing.project.projectImage}
                         />
                     </div>
                     </div>

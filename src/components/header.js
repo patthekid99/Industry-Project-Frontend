@@ -4,6 +4,7 @@ import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import logo from "../images/logo.jpg";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
+import blankPic from "../images/defaultProfilePic.jpg"
 
 const navigation = [
   { name: "HOME", link: "/home", current: true },
@@ -113,7 +114,7 @@ export default function Header() {
                           ) : (
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={user.userDetails.profilePic}
+                              src={user.userDetails.profilePic ? user.userDetails.profilePic : blankPic}
                               alt=""
                             />
                           )}
