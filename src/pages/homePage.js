@@ -18,7 +18,7 @@ export default function TestMap() {
     const [listings, setListings] = useState([])
     const [coordinates, setCord] = useState([])
     const [developers, setDevelopers] = useState([])
-    const [cities, setCities] = useState([])
+
 
 
     useEffect(() => {
@@ -35,75 +35,129 @@ export default function TestMap() {
                 }
               )
 
-              // console.log(result[i].developer)
-
-              
-             
-              // setDevelopers([...developers, result[i].developer])  
-       
-              // setDevelopers([...developers, result[i].developer])
-
               setDevelopers(developers => [...developers, result[i].developer])
             }
-            // console.log(oldArr)
             
-            setListings(result)
-            
-            // setDevelopers(developers, ...new Set(listings.map((listing) => listing.developer)))
-            
+            setListings(result)       
           }    
- 
-
-
         getListings()
         
     }, [])
 
+    console.log(listings)
 
-    const distinctCities = [
-      ...new Set(listings.map((listing) => listing.city)),
-    ];
     const distinctDevelopers = [
       ...new Set(developers.map((dev) => dev.developerName)),
     ];
 
-    const Cities = distinctCities.map((city) => ({
-      label: city,
-      value: city,
-    }));
     
+    const distinctCities = [
+      ...new Set(listings.map((l) => l.project.city)),
+    ];
+
+  
     const Developers = distinctDevelopers.map((dev) => ({
       label: dev,
       value: dev
     }));
 
+    const Cities = distinctCities.map((city) => ({
+      label: city,
+      value: city
+    }));
+
+    const SortBy = [
+      {  value: "newest",
+         label: "New"  
+      },
+      {
+        value:"oldest",
+        label: "Old"
+      },
+      {
+        value:"expected",
+        label: "Completion Date"
+      },
+      {
+        value:"presale",
+        label: "Presale"
+      },
+      {
+        value:"soon",
+        label: "Presale Starting Soon"
+      },
+      {
+        value:"available",
+        label: "Available Now"
+      }
+  ];
+
+
+    async function searchListings(query) {
+      var result;
+      if (!query) {
+        result = await axios.get(
+          baseURL       
+        );
+      } else {
+        result = await axios.get(baseURL+`search/${query}`)
+      }
+      setListings(result.data)
+    }
+
+
+
 
   async function filterByDeveloper(query) {
-    console.log(query)
-    var result;
+    const devName = query.value.toLowerCase()
+    var results;
     if (!query) {
-      result = await axios.get(
+      results = await axios.get(
         baseURL
       );
     } else {
-      result = await axios.get(baseURL+`developerName/${query.value}`);
+      results = await axios.get(baseURL+`developerName/${devName}`);
     }
-    console.log((baseURL+`developerName/${query.value}`))
-    console.log(result)
-    setListings(result);
+    setListings(results.data)
   }
-    
 
 
-    async function filterByCity(city) {
-      // console.log(city)
-      const result = await axios.get(baseURL+`city/${city}`, {
-      });
-      setListings(result.data);
-      // if (result.data.length > 0) {
-      //   displayProfile(result.data[0]);
-      // }
+  async function filterByCity(city) {
+    var results;
+    if (!city) {
+      results = await axios.get(
+        baseURL
+      );
+    } else {
+      results = await axios.get(baseURL+`city/${city}`);
     }
+    setListings(results.data)
+  }
+
+  async function sortBy(value){
+    var results;
+    if (!value) {
+      results = await axios.get(
+        baseURL
+      );
+    } else {
+      results = await axios.get(baseURL+`sortby/${value}`);
+    }
+    setListings(results.data)
+
+  }
+
+  async function setStartDate(date) {
+    var results;
+    if (!date) {
+      results = await axios.get(
+        baseURL
+      );
+    } else {
+      results = await axios.get(baseURL+`sort/${date}`);
+    }
+    setListings(results.data)
+  }
 
     return(
         <>
@@ -124,24 +178,28 @@ export default function TestMap() {
                           className="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-transparent sm:text-sm"
                           placeholder="Search Listings"
                           type="search"
+                          onChange={(event) => {
+                            searchListings(event.target.value);
+                          }}
                    
                         />
                       </div>
-                      <button
-                        type="submit"
-                        className="inline-flex justify-center px-3.5 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                      >
-                        <FilterIcon className="h-5 w-5 text-gray-400" aria-hidden="true"/>
-                        <span className="sr-only">Search</span>
-                      </button>
+              
                     </form>
 
           
                     <div className="filter-container flex">
       
-                      <Dropdown onChange={(event) => {filterByCity(event.value)}} placeholder="Filter by City" options={Cities}/>
+                 
                       <Dropdown onChange={(event) => {filterByDeveloper(event)}} placeholder="Filter by Developer" options={Developers}/>
-                      <Dropdown onChange={(event) => {filterByCity(event.value)}} placeholder="Filter by Date" options={Cities}/>
+                      <Dropdown onChange={(event) => {filterByCity(event.value)}} placeholder="Filter by City" options={Cities}/>
+                      <Dropdown onChange={(event) => {sortBy(event.value)}} placeholder="Sort By" options={SortBy}/>
+              
+
+
+
+                      <input type="date" onChange={(event) => {setStartDate(event.target.value)}}/>
+
        
                     </div>
                     <div className='w-full md:max-h-screen gap-6 flex-wrap flex justify-center overflow-auto pb-4'>
@@ -151,18 +209,20 @@ export default function TestMap() {
                                 <img className="h-40 object-cover rounded-xl" src={i.projectImage} alt="" />
                                 <div className="p-2">
                                   <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{i.developer.developerName}</h2>
-                                  <h2 className="font-bold text-lg mb-2 ">{i.projectName}</h2>
-                                  <p className="text-sm text-gray-600">{i.projectDescription}</p>
+                                  <h2 className="font-bold text-lg mb-2 ">{i.project.projectName}</h2>
+                                  <p className="text-sm text-gray-600">{i.project.projectDescription}</p>
                                 </div>
                                 <div className="m-2">
+                                <p className="text-sm text-gray-600">Status: {i.project.projectStatus}</p>
+                                <p className="text-sm text-gray-600">Posted: {i.project.created}</p>
+                                <p className="text-sm text-gray-600">{i.project.city}</p>
+                                <p className="text-sm text-gray-600">Expected completion: {i.project.expectedCompletion}</p>
                                   <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500">
-                                    <Link to={`/listings/${i.projectId}`}>Read More</Link>
+                                    <Link to={`/listings/${i.project.projectId}`}>Read More</Link>
                                   </button>
                                 </div>
                             </div>
                         ))}
-
-
                     </div>
                   </div>
                   <div className="hidden md:flex md:w-1/2 lg:w-1/2 my-4 mx-2 shadow-lg" style={{ height: "100vh" }} >
