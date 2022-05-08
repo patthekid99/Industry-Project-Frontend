@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import blankPic from "../images/defaultProfilePic.jpg";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({ userDetails: {}, role: "" });
+  const [languages, setLanguages] = useState([])
+  let naviagte = useNavigate()
 
   useEffect(() => {
     async function getUserProfile() {
@@ -13,8 +17,11 @@ export default function ProfilePage() {
         },
       });
       const resultProfile = result.data;
+      const languages = await axios.get("https://localhost:44340/api/language/")
       setProfile(resultProfile);
+      setLanguages(languages.data)
       console.log(resultProfile);
+      console.log(languages.data)
     }
     getUserProfile();
   }, []);
@@ -23,17 +30,17 @@ export default function ProfilePage() {
     e.preventDefault();
     var mydata = JSON.parse(localStorage.getItem("myData"));
     const result = await axios.put(
-      `https://localhost:44342/api/Profile/${profile.role}`,
+      `https://localhost:44340/api/Profile/${profile.role}`,
       profile.userDetails,
       {
         headers: {
           Authorization: `Bearer ${mydata.tokenString}`,
         },
       }
-    );
-    const resultProfile = result.data;
-    setProfile(resultProfile);
-    console.log(resultProfile);
+    ).then((res) => {
+      naviagte("/home")
+    });
+    
   };
 
   const onChange = (e) => {
@@ -41,7 +48,7 @@ export default function ProfilePage() {
     setProfile({
       ...profile,
       userDetails: { ...profile.userDetails, [e.target.name]: e.target.value },
-    });
+    })
   };
 
   return (
@@ -166,14 +173,16 @@ export default function ProfilePage() {
                         >
                           Languages
                         </label>
-                        <input
-                          type="text"
-                          name="languages"
-                          id="languages"
-                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                          defaultValue={profile.userDetails.languages}
-                          onChange={onChange}
-                        />
+                        <select
+                           name="languages"
+                           id="languages"
+                           className="form-multiselect mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                           >
+                          {languages.map((l) => (
+                            <option value={l.languageId}>{l.languageName}</option>
+                          ))}
+                        </select>
+                       
                       </div>
                     </>
                   ) : (
@@ -226,7 +235,7 @@ export default function ProfilePage() {
                         <div className="mt-1 flex items-center">
                           <img
                             className="inline-block h-12 w-12 rounded-full"
-                            src={profile.userDetails.logo}
+                            src={profile.userDetails.logo ? profile.userDetails.logo : blankPic}
                             alt=""
                           />
                           <div className="w-full ml-4 flex">
@@ -252,7 +261,7 @@ export default function ProfilePage() {
                         <div className="mt-1 flex items-center">
                           <img
                             className="inline-block h-12 w-12 rounded-full"
-                            src={profile.userDetails.profilePic}
+                            src={profile.userDetails.profilePic ? profile.userDetails.profilePic : blankPic}
                             alt=""
                           />
                           <div className="w-full ml-4 flex">
@@ -446,7 +455,9 @@ export default function ProfilePage() {
                     type="button"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    Cancel
+                    <Link to={"/home"}>
+                      Cancel
+                    </Link>
                   </button>
                   <button
                     type="submit"

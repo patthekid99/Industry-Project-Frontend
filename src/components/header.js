@@ -108,7 +108,7 @@ export default function Header() {
                           {user.role === "Developer" ? (
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={user.userDetails.logo}
+                              src={user.userDetails.logo ? user.userDetails.log : blankPic}
                               alt=""
                             />
                           ) : (
@@ -130,23 +130,31 @@ export default function Header() {
                         leaveTo="transform opacity-0 scale-95"
                       >
                         <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                          {userNavigation.map((item) => (
-                            <Menu.Item key={item.name}>
-                              {({ active }) => (
-                                <Link
-                                  to={item.link}
-                                  className={classNames(
-                                    item.link === location.pathname
-                                      ? "bg-gray-100"
-                                      : "",
-                                    "block px-4 py-2 text-sm text-gray-700"
-                                  )}
-                                >
-                                  {item.name}
-                                </Link>
-                              )}
-                            </Menu.Item>
-                          ))}
+                          <Menu.Item key={"profile"}>
+                            <Link
+                              to={"/profile"}
+                              className={classNames(
+                                "/profile" === location.pathname
+                                  ? "bg-gray-100"
+                                  : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}>
+                                Your Profile
+                            </Link>
+                          </Menu.Item>
+                          <Menu.Item key={"signout"}>
+                          <Link
+                              to={"/login"}
+                              onClick={() => localStorage.removeItem("myData")}
+                              className={classNames(
+                                "/login" === location.pathname
+                                  ? "bg-gray-100"
+                                  : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}>
+                                Sign out
+                            </Link>
+                          </Menu.Item>
                         </Menu.Items>
                       </Transition>
                     </Menu>
@@ -235,14 +243,21 @@ export default function Header() {
                       </div>
                     </div>
                     <div className="mt-3 space-y-1">
-                      {userNavigation.map((item) => (
-                        <Link
-                          className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                          to={item.link}
-                        >
-                          <Disclosure.Button>{item.name}</Disclosure.Button>
-                        </Link>
-                      ))}
+                      <Link
+                        className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                        to={"/profile"}
+                      >
+                         <Disclosure.Button>Your Profile</Disclosure.Button>
+                      </Link>
+                      <Link
+                        className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                        to={"/login"}
+                        onClick={() => localStorage.removeItem("myData")}
+                      >
+                        <Disclosure.Button>Sign out</Disclosure.Button>
+                      </Link>
+                      
+
                     </div>
                   </>
                 )}
