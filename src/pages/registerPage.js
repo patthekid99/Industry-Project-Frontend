@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function RegisterPage() {
 
-    const [user, setUser] = useState({ Email: '', Password: '', Role: ''})
+    const [user, setUser] = useState({ Email: '', Password: '', Role: 'PPOwner'})
     let navigate = useNavigate();
     const apiUrl = "https://localhost:44340/api/Auth/register";
     

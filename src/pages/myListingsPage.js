@@ -23,7 +23,7 @@ export default function MyListingsPage() {
 
     useEffect(() => {
         async function getMyListings() {
-            // var token = {"tokenString":"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjVhMmRhYTBhLWFiOWItNDIyZi1hN2MwLTI4OTA4N2JjNjNiYyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImRldmVsb3BlckB0ZXN0LmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkRldmVsb3BlciIsImV4cCI6MTY1MTU3MDA1MywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzNDAvIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzNDAvIn0.xFE53d6ySLVQvFwF7N5puNBmHi9SuHR7h1nNHy_Ll7u0CCESIxEcAGsy5EOkNBYmnuQlRuD3ihKWfDZ5M2Od9A"}
+             // var token = {"tokenString":"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjVhMmRhYTBhLWFiOWItNDIyZi1hN2MwLTI4OTA4N2JjNjNiYyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImRldmVsb3BlckB0ZXN0LmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkRldmVsb3BlciIsImV4cCI6MTY1MTU3MDA1MywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzNDAvIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzNDAvIn0.xFE53d6ySLVQvFwF7N5puNBmHi9SuHR7h1nNHy_Ll7u0CCESIxEcAGsy5EOkNBYmnuQlRuD3ihKWfDZ5M2Od9A"}
             
             // localStorage.setItem("myData",JSON.stringify(token))
             // var mydata = JSON.parse(localStorage.getItem("myData"))
