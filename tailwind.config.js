@@ -8,7 +8,16 @@ module.exports = {
       lg: "1024px",
       xl: "1280px",
     },
+  
     extend: {
+      maxHeight: {
+        '394': '394px'
+      },
+      width: {
+        '600': '600px',
+        'wfa':"-webkit-fill-available"
+       },
+
       colors: {
         chairgreen: {
           50: '#f5f6f6',
@@ -37,7 +46,5 @@ module.exports = {
       }
     },
   },
-  plugins: [require("@tailwindcss/line-clamp"),
-            require('@tailwindcss/custom-forms'),
-          ],
+  plugins: [require("@tailwindcss/line-clamp")],
 };
