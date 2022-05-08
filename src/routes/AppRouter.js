@@ -9,6 +9,7 @@ import ProfilePage from "../pages/profilePage";
 import Tabs from "../Tabs/Tabs";
 import FindRealtor from "../pages/findRealtorPage";
 import ListingDetails from "../pages/listingDetailsPage";
+import NewListingPage from "../pages/newListingPage";
 
 export default function AppRouter() {
   return (
