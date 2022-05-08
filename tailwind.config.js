@@ -17,6 +17,9 @@ module.exports = {
         '600': '600px',
         'wfa':"-webkit-fill-available"
        },
+       minWidth: {
+         '371':'336px'
+       },
 
       colors: {
         chairgreen: {

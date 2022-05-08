@@ -18,6 +18,7 @@ export default function TestMap() {
   const [listings, setListings] = useState([]);
   const [coordinates, setCord] = useState([]);
   const [developers, setDevelopers] = useState([]);
+  const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
     async function getListings() {
@@ -140,14 +141,21 @@ export default function TestMap() {
     setListings(results.data);
   }
 
+  function toggleFilter() {
+    console.log(hidden);
+  }
+
   return (
     <>
-      <div className="min-h-full py-10 bg-gray-100 ">
+      <div className="md:min-h-full md:py-10 bg-gray-100 lg:pt-0 ">
         <main>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 sm:rounded-[24px] bg-green-700 ">
-            <div className="flex items-center justify-between">
-              <div className=" ml-2 p-4 search-box flex-none w-600">
-                <form className="" onsubmit="">
+          <div className="mb:bg-chairgreen-500 mb:mt-6 max-w-7xl mx-auto sm:px-6 lg:px-8 sm:rounded-[24px] ">
+
+            
+            <div className="sm:block md:flex md:justify-center items-center justify-between">
+              <div className="Here">
+              <div className="mb:justify-evenly mb:flex mb:px-4 mb:py-8 mb:pb-4 sm:w-full md:ml-2  flex-none md:w-600">
+                <form className="w-wfa" onsubmit="">
                   <div className="relative">
                     <label>
                       <input
@@ -169,51 +177,67 @@ export default function TestMap() {
                     </label>
                   </div>
                 </form>
-              </div>
-
-              <div className="flex py-4 pl-4 pr-16">
-                <Dropdown
-                  onChange={(event) => {
-                    filterByDeveloper(event);
-                  }}
-                  placeholder="Developer"
-                  options={Developers}
-                />
-                <Dropdown
-                  onChange={(event) => {
-                    filterByCity(event.value);
-                  }}
-                  placeholder="City"
-                  options={Cities}
-                />
-                <Dropdown
-                  onChange={(event) => {
-                    sortBy(event.value);
-                  }}
-                  placeholder="Sort By"
-                  options={SortBy}
-                />
-                <div className="pl-1">
-                  <input
-                    className="h-full rounded-lg text-center"
-                    type="date"
-                    onChange={(event) => {
-                      setStartDate(event.target.value);
-                    }}
-                  />
+                <div>
+                  <button
+                    className="bg-transparent border-0 text-black float-right sm:pl-6"
+                    onClick={() => setHidden((s) => !s)}
+                  >
+                    <span className="mb:inline-grid text-white opacity-7 h-9 w-16 text-xs block bg-gold-600 py-0 leading-4 rounded-full">
+                      Show<br></br>Filters
+                    </span>
+                  </button>
                 </div>
               </div>
+
+              {!hidden ? (
+                <div className="mb:flex mb:flex-col mb:p-4 mb:py-0 mb:gap-3 md:gap-0 md:flex-row md:justify-center md:py-4 md:px-4  lg:pr-16">
+                  <Dropdown
+                    onChange={(event) => {
+                      filterByDeveloper(event);
+                    }}
+                    placeholder="Developer"
+                    options={Developers}
+                  />
+                  <Dropdown
+                    onChange={(event) => {
+                      filterByCity(event.value);
+                    }}
+                    placeholder="City"
+                    options={Cities}
+                  />
+                  <Dropdown
+                    onChange={(event) => {
+                      sortBy(event.value);
+                    }}
+                    placeholder="Sort By"
+                    options={SortBy}
+                  />
+                  <div className="pl-1">
+                    <input
+                      className="mb:min-w-371  md:min-w-full h-full rounded-lg text-center"
+                      type="date"
+                      onChange={(event) => {
+                        setStartDate(event.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : null}
+
+              </div>
+
+              
             </div>
 
-            <div className="flex mb-4">
+            <div className="mb:px-2 md:flex md:mb-4">
               {/* map container */}
-              <div className="hidden md:flex md:w-1/2 lg:w-1/2 my-4 mx-2 shadow-lg ">
+              <div className="md:flex md:w-1/2 lg:w-1/2 my-4 mx-2 shadow-lg ">
                 <div style={{ width: "100%" }}>
                   <MapContainer
                     center={[49.2827, -123.1207]}
                     zoom={11}
                     scrollWheelZoom={false}
-                    className="md: rounded-xl"
+                    className="rounded-xl w-20"
                   >
                     <TileLayer
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
