@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Select from 'react-select';
 import axios from "axios";
 import blankPic from "../images/defaultProfilePic.jpg";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({ userDetails: {}, role: "" });
   const [languages, setLanguages] = useState([])
+  const [realtorLanguanges, setRealtorLanguages] = useState([])
   let naviagte = useNavigate()
 
   useEffect(() => {
@@ -17,11 +19,17 @@ export default function ProfilePage() {
         },
       });
       const resultProfile = result.data;
+      if(resultProfile.role === "Realtor") {
+        const realtor = await axios.get("https://localhost:44340/api/Profile/realtor", {
+          headers: {
+            Authorization: `Bearer ${mydata.tokenString}`,
+          },
+        })
+       setRealtorLanguages(realtor.data.languages)
+      }
       const languages = await axios.get("https://localhost:44340/api/language/")
       setProfile(resultProfile);
       setLanguages(languages.data)
-      console.log(resultProfile);
-      console.log(languages.data)
     }
     getUserProfile();
   }, []);
@@ -43,6 +51,18 @@ export default function ProfilePage() {
     
   };
 
+  const languageOptions = languages.map((language) => ({
+    label: language.languageName,
+    value: language.languageId,
+  }));
+
+  const defaultLanguages = languageOptions.filter((lo) => {
+    return realtorLanguanges.some((rl) => {
+      return lo.value === rl.languageId
+    })
+  })
+
+
   const onChange = (e) => {
     e.persist();
     setProfile({
@@ -50,6 +70,11 @@ export default function ProfilePage() {
       userDetails: { ...profile.userDetails, [e.target.name]: e.target.value },
     })
   };
+
+  function onLangChnage(e) {
+    const filteredLang = e.map(l => l.value)
+    setProfile({...profile, userDetails: {...profile.userDetails, languageKeys: filteredLang}})
+  }
 
   return (
     <div className="min-h-screen py-10 bg-gray-100">
@@ -168,20 +193,17 @@ export default function ProfilePage() {
                       </div>
                       <div className="sm:col-span-3">
                         <label
-                          htmlFor="languages"
+                          htmlFor="realtorLanguages"
                           className="block text-sm font-medium text-blue-gray-900"
                         >
                           Languages
                         </label>
-                        <select
-                           name="languages"
-                           id="languages"
-                           className="form-multiselect mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                           >
-                          {languages.map((l) => (
-                            <option value={l.languageId}>{l.languageName}</option>
-                          ))}
-                        </select>
+                        <Select className="mt-1 block rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                        options={languageOptions}
+                        isMulti={true}
+                        defaultValue={defaultLanguages}
+                        onChange={(e) => onLangChnage(e)}
+                         />
                        
                       </div>
                     </>
@@ -195,6 +217,7 @@ export default function ProfilePage() {
                           Email address
                         </label>
                         <input
+                          disabled
                           type="text"
                           name="email"
                           id="email"
@@ -324,6 +347,7 @@ export default function ProfilePage() {
                         Email address
                       </label>
                       <input
+                        disabled
                         type="text"
                         name="email"
                         id="email"

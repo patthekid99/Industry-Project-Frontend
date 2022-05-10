@@ -3,12 +3,12 @@ import axios from "axios";
 import { ChevronLeftIcon } from "@heroicons/react/solid";
 import blankPic from "../images/defaultProfilePic.jpg"
 
-const devKeys = {
-  email: "Email",
-  phoneNumber: "Phone",
-  website: "Website",
-  avgStarRating: "Average Rating",
-};
+const devKeys = [
+  {name: "Email", value: "email", link: false},
+  {name: "Phone", value: "phoneNumber", link: false},
+  {name: "Website", value: "website", link: true},
+  {name: "Average Rating", value: "avgStarRating", link: false},
+];
 
 const ratingOptions = [
   { name: "Excellent", value: 5 },
@@ -133,12 +133,12 @@ export default function FindDeveloper() {
         <div className="flex-1 flex flex-col max-w-7xl mx-auto sm:rounded-[24px] bg-white ">
           <main className="flex-grow flex flex-row min-h-0">
             <section
-              className={`flex flex-col flex-none overflow-auto transition-all duration-300 ease-in-out lg:max-w-xs md:w-2/5   ${
+              className={`flex flex-col flex-none overflow-auto transition-all duration-300 ease-in-out lg:max-w-xs md:w-2/5 ${
                 showContacts ? "w-full group" : "w-0 group"
               }`}
             >
               <div className="search-box p-4 flex-none">
-                <form onsubmit="">
+                
                   <div className="relative">
                     <label>
                       <input
@@ -157,7 +157,6 @@ export default function FindDeveloper() {
                       </span>
                     </label>
                   </div>
-                </form>
                 <span className="relative z-0 inline-flex shadow-sm rounded-md mt-2">
                   <label htmlFor="sort-by" className="sr-only">
                     Sort by Review
@@ -174,7 +173,7 @@ export default function FindDeveloper() {
               </span>
 
               </div>
-              <div className="contacts p-2 flex-1 overflow-y-scroll">
+              <div className="contacts p-2 flex-1 overflow-y-scroll h-fit md:max-h-screen">
                 {developers.map((d) => (
                   <div
                     className="flex justify-between items-center p-3 hover:bg-gray-200 rounded-lg relative"
@@ -214,7 +213,7 @@ export default function FindDeveloper() {
                   <span>Directory</span>
                 </button>
               </nav>
-              <article>
+              <article className={`lg: block ${showContacts ? "hidden lg:block" : ""}`}>
                 {/* Profile header */}
                 <div>
                   <div>
@@ -289,7 +288,7 @@ export default function FindDeveloper() {
                 <div className="mt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                   {showReviews ? (
                     <>
-                      <div className="h-fit">
+                      <div className="min-h-full mx-auto grid grid-cols-1 sm:px-6">
                         <ul role="list" className="space-y-8">
                           {devSelected.reviews.map((review) => (
                             <li key={review.reviewID}>
@@ -313,7 +312,7 @@ export default function FindDeveloper() {
                                     </a>
                                   </div>
                                   <div className="mt-1 text-sm text-gray-700">
-                                    <p>{review.comment}</p>
+                                    <p className="break-all">{review.comment}</p>
                                   </div>
                                   <div className="mt-2 text-sm space-x-2">
                                     <span className="text-gray-500 font-medium">
@@ -358,7 +357,7 @@ export default function FindDeveloper() {
                                           ratingMethod.value == postReviewBody.starRating
                                         }
                                         className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                                        onChange={onChange}
+                                        onChange={() => setPostReview({...postReviewBody, starRating: ratingMethod.value})}
                                       />
                                       <label
                                         htmlFor={ratingMethod.value}
@@ -403,14 +402,24 @@ export default function FindDeveloper() {
                     </>
                   ) : (
                     <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                      {Object.keys(devKeys).map((field) => (
-                        <div key={field} className="sm:col-span-1">
+                      {devKeys.map((d) => (
+                        <div key={d.value} className="sm:col-span-1">
                           <dt className="text-sm font-medium text-gray-500">
-                            {devKeys[field]}
+                            {d.name}
                           </dt>
-                          <dd className="mt-1 text-sm text-gray-900">
-                            {devSelected.developer[field]}
-                          </dd>
+                          {d.link ? 
+                          <dd className="mt-1 text-sm text-grey-900">
+                          <a
+                            target={"_blank"}
+                            href={devSelected.developer[d.value]}
+                            className="text-blue-500"
+                          >
+                             {devSelected.developer[d.value]}
+                          </a>
+                        </dd> :
+                        <dd className="mt-1 text-sm text-grey-900">
+                           {devSelected.developer[d.value]}
+                        </dd>}
                         </div>
                       ))}
                     </dl>

@@ -3,18 +3,18 @@ import axios from "axios";
 import { ChevronLeftIcon, TrashIcon } from "@heroicons/react/solid";
 import blankPic from "../images/defaultProfilePic.jpg"
 
-const realtorKeys = {
-  email: "Email",
-  companyName: "Company Name",
-  phoneNumber: "Phone",
-  avgStarRating: "Average Rating",
-  website: "Website",
-  linkedIn: "LinkedIn",
-  twitter: "Twitter",
-  youtube: "Youtube",
-  instagram: "Instagram",
-  facebook: "Facebook",
-};
+const realtorKeys = [
+  {name: "Email", value: "email", link: false},
+  {name: "Company Name", value: "companyName", link: false},
+  {name: "Phone", value: "phoneNumber", link: false},
+  {name: "Average Rating", value: "avgStarRating", link: false},
+  {name: "Website", value: "website", link: true},
+  {name: "LinkedIn", value: "linkedIn", link: true},
+  {name: "Twitter", value: "twitter", link: true},
+  {name: "Youtube", value: "youtube", link: true},
+  {name: "Instagram", value: "instagram", link: true},
+  {name: "Facebook", value: "facebook", link: true},
+];
 
 const ratingOptions = [
   { name: "Excellent", value: 5 },
@@ -176,10 +176,10 @@ export default function FindRealtor() {
 
     return (
       <div className="min-h-screen w-full flex antialiased bg-gray-100 overflow-hidden sm:p-10">
-        <div className="flex-1 flex flex-col max-w-7xl mx-auto sm:rounded-[24px] bg-white ">
+        <div className="flex-1 flex flex-col max-w-7xl mx-auto sm:rounded-[24px] bg-white">
           <main className="flex-grow flex flex-row min-h-0">
             <section
-              className={`flex flex-col flex-none overflow-auto transition-all duration-300 ease-in-out lg:max-w-xs md:w-2/5   ${
+              className={`flex flex-col flex-none overflow-auto transition-all duration-300 ease-in-out lg:max-w-xs md:w-2/5  ${
                 state.showContacts ? "w-full group" : "w-0 group"
               }`}
             >
@@ -240,7 +240,7 @@ export default function FindRealtor() {
               </span>
 
               </div>
-              <div className="contacts p-2 flex-1 overflow-y-scroll">
+              <div className="contacts p-2 flex-1 overflow-y-scroll h-fit md:max-h-screen">
                 {state.realtors.map((r) => (
                   <div
                     className="flex justify-between items-center p-3 hover:bg-gray-200 rounded-lg relative"
@@ -280,7 +280,7 @@ export default function FindRealtor() {
                   <span>Directory</span>
                 </button>
               </nav>
-              <article>
+              <article className={`lg: block ${state.showContacts ? "hidden lg:block" : ""}`}>
                 {/* Profile header */}
                 <div>
                   <div>
@@ -290,7 +290,7 @@ export default function FindRealtor() {
                       alt=""
                     />
                   </div>
-                  <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="md:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
                       <div className="flex">
                         <img
@@ -357,10 +357,11 @@ export default function FindRealtor() {
 
                 {/* Description list */}
                 <div className="mt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+               
                   {state.showReviews ? (
                     <>
-                      <div className="h-fit">
-                        <ul role="list" className="space-y-8">
+                      <div className="min-h-full mx-auto grid grid-cols-1 sm:px-6">
+                        <ul role="list" className="space-y-6 ">
                           {state.realtorSelected.reviews.map((review) => (
                             <li key={review.reviewID}>
                               <div className="flex space-x-3">
@@ -382,8 +383,8 @@ export default function FindRealtor() {
                                         review.potentialBuyer.lastName}
                                     </a>
                                   </div>
-                                  <div className="mt-1 text-sm text-gray-700">
-                                    <p>{review.comment}</p>
+                                  <div className="m-1 text-sm text-gray-700">
+                                    <p className="break-all">{review.comment}</p>
                                   </div>
                                   <div className="mt-2 text-sm space-x-2">
                                     <span className="text-gray-500 font-medium">
@@ -478,16 +479,27 @@ export default function FindRealtor() {
                     </>
                   ) : (
                     <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                      {Object.keys(realtorKeys).map((field) => (
-                        <div key={field} className="sm:col-span-1">
+                       {realtorKeys.map((r) => (
+                        <div key={r.value} className="sm:col-span-1">
                           <dt className="text-sm font-medium text-gray-500">
-                            {realtorKeys[field]}
+                            {r.name}
                           </dt>
-                          <dd className="mt-1 text-sm text-gray-900">
-                            {state.realtorSelected.realtor[field]}
-                          </dd>
+                          {r.link ? 
+                          <dd className="mt-1 text-sm text-grey-900">
+                          <a
+                            target={"_blank"}
+                            href={state.realtorSelected.realtor[r.value]}
+                            className="text-blue-500"
+                          >
+                             {state.realtorSelected.realtor[r.value]}
+                          </a>
+                        </dd> :
+                        <dd className="mt-1 text-sm text-grey-900">
+                           {state.realtorSelected.realtor[r.value]}
+                        </dd>}
                         </div>
                       ))}
+                     
                       <div className="sm:col-span-1">
                           <dt className="text-sm font-medium text-gray-500">
                             Languages

@@ -18,6 +18,7 @@ export default function TestMap() {
   const [listings, setListings] = useState([]);
   const [coordinates, setCord] = useState([]);
   const [developers, setDevelopers] = useState([]);
+  const [cities, setCities] = useState([])
   const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
@@ -26,40 +27,59 @@ export default function TestMap() {
       const result = results.data;
       for (let i = 0; i < result.length; i++) {
         Geocode.fromAddress(
-          result[i].streetNum +
+          result[i].project.streetNum +
             " " +
-            result[i].streetName +
+            result[i].project.streetName +
             " " +
-            result[i].city +
+            result[i].project.city +
             " " +
-            result[i].postalCode
+            result[i].project.postalCode
         ).then((response) => {
           const { lat, lng } = response.results[0].geometry.location;
-          result[i].lat = lat;
-          result[i].lng = lng;
+          result[i].project.lat = lat;
+          result[i].project.lng = lng;
           setCord([...coordinates, { lat: lat, lng: lng }]);
         });
 
-        setDevelopers((developers) => [...developers, result[i].developer]);
       }
-
+      const distinctDevelopers = [
+        ...new Set(result.map((dev) => dev.developer.developerName)),
+      ];
+      const distinctCities = [...new Set(result.map((l) => l.project.city))];
+      setDevelopers(distinctDevelopers)
+      setCities(distinctCities)
       setListings(result);
+      console.log(result)
     }
     getListings();
   }, []);
 
-  const distinctDevelopers = [
-    ...new Set(developers.map((dev) => dev.developerName)),
-  ];
-
-  const distinctCities = [...new Set(listings.map((l) => l.project.city))];
-
-  const Developers = distinctDevelopers.map((dev) => ({
+  function geoCodeAddress(list) {
+    for (let i = 0; i < list.length; i++) {
+      Geocode.fromAddress(
+        list[i].project.streetNum +
+          " " +
+          list[i].project.streetName +
+          " " +
+          list[i].project.city +
+          " " +
+          list[i].project.postalCode
+      ).then((response) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        list[i].project.lat = lat;
+        list[i].project.lng = lng;
+        setCord([...coordinates, { lat: lat, lng: lng }]);
+      });
+    }
+    return list
+  }
+  
+  const Developers = developers.map((dev) => ({
     label: dev,
     value: dev,
   }));
 
-  const Cities = distinctCities.map((city) => ({
+  const Cities = cities.map((city) => ({
     label: city,
     value: city,
   }));
@@ -91,13 +111,14 @@ export default function TestMap() {
   const placeholder = `Search through ${listings.length} listings...`;
 
   async function searchListings(query) {
-    var result;
+    var results;
     if (!query) {
-      result = await axios.get(baseURL);
+      results = await axios.get(baseURL);
     } else {
-      result = await axios.get(baseURL + `search/${query}`);
+      results = await axios.get(baseURL + `search/${query}`);
     }
-    setListings(result.data);
+    const result = geoCodeAddress(results.data)
+    setListings(result);
   }
 
   async function filterByDeveloper(query) {
@@ -108,7 +129,8 @@ export default function TestMap() {
     } else {
       results = await axios.get(baseURL + `developerName/${devName}`);
     }
-    setListings(results.data);
+    const result = geoCodeAddress(results.data)
+    setListings(result);
   }
 
   async function filterByCity(city) {
@@ -118,8 +140,9 @@ export default function TestMap() {
     } else {
       results = await axios.get(baseURL + `city/${city}`);
     }
-    setListings(results.data);
-  }
+    const result = results.data
+    const list = geoCodeAddress(result)
+    setListings(list)}
 
   async function sortBy(value) {
     var results;
@@ -128,7 +151,8 @@ export default function TestMap() {
     } else {
       results = await axios.get(baseURL + `sortby/${value}`);
     }
-    setListings(results.data);
+    const result = geoCodeAddress(results.data)
+    setListings(result);
   }
 
   async function setStartDate(date) {
@@ -138,7 +162,8 @@ export default function TestMap() {
     } else {
       results = await axios.get(baseURL + `sort/${date}`);
     }
-    setListings(results.data);
+    const result = geoCodeAddress(results.data)
+    setListings(result);
   }
 
   function toggleFilter() {
@@ -147,11 +172,9 @@ export default function TestMap() {
 
   return (
     <>
-      <div className="md:min-h-full md:py-10 bg-gray-100 lg:pt-0 ">
+      <div className="md:min-h-full md:py-10 bg-gray-100  ">
         <main>
           <div className="mb:bg-chairgreen-500 mb:mt-6 max-w-7xl mx-auto sm:px-6 lg:px-8 sm:rounded-[24px] ">
-
-            
             <div className="sm:block md:flex md:justify-center items-center justify-between">
               <div className="Here">
               <div className="mb:justify-evenly mb:flex mb:px-4 mb:py-8 mb:pb-4 sm:w-full md:ml-2  flex-none md:w-600">
@@ -236,47 +259,41 @@ export default function TestMap() {
                   <MapContainer
                     center={[49.2827, -123.1207]}
                     zoom={11}
-                    scrollWheelZoom={false}
+                    scrollWheelZoom={true}
                     className="rounded-xl w-20"
                   >
                     <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                       url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
                     />
                     {listings.map(
                       (element) =>
-                        element.lat &&
-                        element.lng &&
+                        element.project.lat &&
+                        element.project.lng &&
                         element.developer && (
-                          <Marker position={[element.lat, element.lng]}>
-                            <Popup>
-                              <div className="w-64 p-2 bg-white rounded-xl transform transition-all shadow-lg">
-                                <img
-                                  className="h-40 object-cover rounded-xl"
-                                  src={element.projectImage}
-                                  alt=""
-                                />
-                                <div className="p-2">
-                                  <h2 className="font-bold text-lg mb-2 ">
-                                    {element.developer.developerName}
+                          <Marker position={[element.project.lat, element.project.lng]}>
+                            <Popup autoPanPadding={true}>
+                                <div className="p-1">
+                                  <h2 className="font-bold text-lg mb-1">
+                                    {element.project.projectName}
                                   </h2>
                                   <p className="text-sm text-gray-600">
-                                    It gives you the best of Central City and
-                                    its lifestyle, the parks and recreation
-                                    centre are next door, its steps to the
-                                    SkyTrain
+                                    Status: {element.project.projectStatus}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    Date Created: {element.project.created}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    Expected Completion: {element.project.expectedCompletion}
                                   </p>
                                 </div>
-                                <div className="m-2">
-                                  <a
-                                    role="button"
-                                    href="#"
-                                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500"
-                                  >
-                                    Learn More
-                                  </a>
+                                <div>
+                                  <button
+                                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500">
+                                      <Link to={`/listings/${element.project.projectId}`}>
+                                        Read More
+                                      </Link>
+                                  </button>
                                 </div>
-                              </div>
                             </Popup>
                           </Marker>
                         )
@@ -306,14 +323,6 @@ export default function TestMap() {
                         </p>
                       </div>
                       <div className="m-2">
-                        <p className="text-sm">
-                          Status: {i.project.projectStatus}
-                        </p>
-                        <p className="text-sm">Posted: {i.project.created}</p>
-                        <p className="text-sm">{i.project.city}</p>
-                        <p className="text-sm">
-                          Expected completion: {i.project.expectedCompletion}
-                        </p>
                         <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500">
                           <Link to={`/listings/${i.project.projectId}`}>
                             Read More
