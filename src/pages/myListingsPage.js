@@ -198,17 +198,17 @@ export default function MyListingsPage() {
 
                       <div className="block sm:col-span-2">
                         <label
-                          labelFor="description"
+                          labelFor="projectDescription"
                           className="text-sm font-medium text-gray-900"
                         >
                           Description
                           <textarea
-                            name="description"
-                            id="description"
+                            name="projectDescription"
+                            id="projectDescription"
                             rows={4}
                             className="form-textarea rounded-lg mt-1 p-2 block w-full border-2 border-gray-300 shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-400 focus:border-chairgreen-400"
                             placeholder="Describe the project in few words."
-                            defaultValue={project.description}
+                            defaultValue={project.projectDescription}
                             onChange={onChange}
                           />
                         </label>
@@ -371,7 +371,7 @@ export default function MyListingsPage() {
                           <button className="bg-chairgreen-600 text-white active:bg-chairgreen-400 text-center text-lg
                                               font-bold px-6 py-3 rounded-lg shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                                   type="button"
-                                  onClick={() => setShowModal(true)}>
+                                  onClick={() => openEdit(listing.project.projectId)}>
                             Edit
                           </button>
                         </div>
