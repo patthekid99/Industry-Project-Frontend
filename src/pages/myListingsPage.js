@@ -104,7 +104,10 @@ export default function MyListingsPage() {
                   </button>
                 </div>
                 <div className="relative p-6 flex-auto">
-                  <form className="justify-center items-center">
+                  <form
+                    className="justify-center items-center"
+                    onSubmit={(e) => updateListing(e)}
+                  >
                     <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6">
                       <div className="sm:col-span-2">
                         <label
@@ -269,8 +272,8 @@ export default function MyListingsPage() {
                         Close
                       </button>
                       <button
+                        type="submit"
                         className="px-4 py-2 font-semibold text-sm bg-chairgreen-500 text-white rounded-md shadow-sm hover:-translate-y-1 hover:scale-110 hover:bg-chairgreen-700 ease-in-out delay-150 duration-300"
-                        onClick={(e) => updateListing(e)}
                       >
                         Save Changes
                       </button>
@@ -282,18 +285,8 @@ export default function MyListingsPage() {
           </div>
         </>
       ) : null}
-      <div className="min-h-full py-10 bg-gray-100">
-        <h2 className="block text-gray-600 mx-auto sm:px-6 lg:px-8 sm:rounded-[24px] pb-4 font-bold text-3xl text-blue-gray-900">
-          MY LISTINGS
-        </h2>
+      <div className="min-h-screen py-10 bg-gray-100">
         <div className="max-w-7xl sm:px-6 lg:px-8 mb:rounded-[24px] mx-auto bg-white container">
-          <div className="pt-8 text-center">
-            <Link to={"/newlisting"}>
-              <button className="text-center rounded-lg p-4 bg-chairgreen-500 hover:bg-chairgreen-600 text-white font-bold text-lg">
-                New Listing
-              </button>
-            </Link>
-          </div>
           <div className="py-4 grid grid-cols-3 grid-flow-cols gap-9 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 sm:gap-x-6 mb:grid-cols-1">
             {listings?.map((listing) => (
               <>
@@ -349,37 +342,46 @@ export default function MyListingsPage() {
                       </div> */}
                   </div>
                   <div className="absolute w-full h-full opacity-0 hover:opacity-100 transform transition-all ease-in-out  duration-300">
-                    <img  className="blur-sm object-cover rounded-t min-w-full min-h-full opacity-100"
-                          src={
-                            listing.project.projectImage
-                              ? listing.project.projectImage
-                              : defaultImage
-                          }
-                          alt={listing.project.projectName}
+                    <img
+                      className="blur-sm object-cover rounded-t min-w-full min-h-full opacity-100"
+                      src={
+                        listing.project.projectImage
+                          ? listing.project.projectImage
+                          : defaultImage
+                      }
+                      alt={listing.project.projectName}
                     />
                     <div className="absolute p-2 inset-0 opacity-0 hover:opacity-100">
                       <div>
                         <h2 className="block mx-auto sm:px-6 lg:px-8 sm:rounded-[24px] text-center pb-4 font-bold text-2xl ">
-                          <Link className="text-chairgreen-600 hover:text-gold-500"
-                                to={`/listings/${listing.project.projectId}`}>
-                              {listing.project.projectName}
+                          <Link
+                            className="text-chairgreen-600 hover:text-gold-500"
+                            to={`/listings/${listing.project.projectId}`}
+                          >
+                            {listing.project.projectName}
                           </Link>
                         </h2>
                       </div>
                       <div className="flex flex-col max-h-full">
                         <div className="pt-8 text-center">
-                          <button className="bg-chairgreen-600 text-white active:bg-chairgreen-400 text-center text-lg
+                          <button
+                            className="bg-chairgreen-600 text-white active:bg-chairgreen-400 text-center text-lg
                                               font-bold px-6 py-3 rounded-lg shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                                  type="button"
-                                  onClick={() => openEdit(listing.project.projectId)}>
+                            type="button"
+                            onClick={() => openEdit(listing.project.projectId)}
+                          >
                             Edit
                           </button>
                         </div>
                         <div className="pt-8 text-center">
-                          <button className="bg-chairgreen-600 text-red-500 active:bg-chairgreen-400 text-center text-lg
+                          <button
+                            className="bg-chairgreen-600 text-red-500 active:bg-chairgreen-400 text-center text-lg
                                               font-bold px-6 py-3 rounded-lg shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                                  type="button"
-                                  onClick={() => deleteListing(project.projectDetail.projectID)}>
+                            type="button"
+                            onClick={() =>
+                              deleteListing(listing.project.projectId)
+                            }
+                          >
                             Delete
                           </button>
                         </div>
