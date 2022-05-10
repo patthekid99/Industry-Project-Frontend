@@ -3,7 +3,6 @@ import LandingPage from "../pages/landingPage";
 import LoginPage from "../pages/loginPage";
 import RegisterPage from "../pages/registerPage";
 import HomePage from "../pages/homePage";
-import DirectoryPage from "../pages/directoryPage";
 import MyListingsPage from "../pages/myListingsPage";
 import ProfilePage from "../pages/profilePage";
 import Tabs from "../Tabs/Tabs";
