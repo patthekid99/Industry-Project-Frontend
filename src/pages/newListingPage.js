@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
+import { v4 as uuidv4 } from "uuid";
 
+const SASTOKEN = process.env.REACT_APP_SAS_KEY;
+const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 export default function NewListingPage() {
   let navigate = useNavigate();
   const [project, setProject] = useState();
   const [token, setToken] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     getDeveloper();
@@ -26,6 +31,10 @@ export default function NewListingPage() {
     setProject({ developerId: result.data.userDetails.developerId });
   };
 
+  const onFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
   const onChange = (e) => {
     e.persist();
     setProject({
@@ -34,11 +43,33 @@ export default function NewListingPage() {
     });
   };
 
+  const uploadFile = async (name) => {
+    let storageAccountName = "whatsonpresalestorage";
+    let sasToken = SASTOKEN;
+    const blobService = new BlobServiceClient(
+      `https://${storageAccountName}.blob.core.windows.net/?${sasToken}`
+    );
+    //get container - full public read access
+    const containerClient = blobService.getContainerClient("myfile");
+    await containerClient.createIfNotExists({
+      access: "container",
+    });
+    //create blobClient for container
+    const blobClient = containerClient.getBlockBlobClient(name);
+    //set mimetype as determined from borwser with file upload control
+    const options = { blobHTTPHeaders: { blobContentType: imageFile.type } };
+    //upload file
+    await blobClient.uploadBrowserData(imageFile, options);
+  };
+
   const addListing = async (e) => {
     e.preventDefault();
+    const picname = uuidv4();
+    uploadFile(picname);
+    var projectData = { ...project, projectImage: picname };
     const result = await axios.post(
       `${process.env.REACT_APP_GLOBAL_API}api/Listing`,
-      project,
+      projectData,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -166,19 +197,16 @@ export default function NewListingPage() {
                 htmlFor="projectImage"
                 className="block text-sm font-medium text-gray-700"
               >
-                Image URL
+                Image
               </label>
               <div className="mt-1 flex rounded-md shadow-sm">
-                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                  https://
-                </span>
                 <input
-                  type="text"
+                  type="file"
                   name="projectImage"
                   id="projectImage"
                   className="form-input focus:outline focus:ring-chairgreen-500 focus:border-chairgreen-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
                   placeholder="www.example.com/images/img001.jpg"
-                  onChange={onChange}
+                  onChange={onFileChange}
                 />
               </div>
             </div>

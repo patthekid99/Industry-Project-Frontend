@@ -5,7 +5,10 @@ import defaultImage from "../images/project-default.png";
 import BounceLoader from "react-spinners/FadeLoader";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Geocode from "react-geocode";
+import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
+import { v4 as uuidv4 } from "uuid";
 
+const SASTOKEN = process.env.REACT_APP_SAS_KEY;
 const APIKEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 Geocode.setApiKey(APIKEY);
 Geocode.setRegion("ca");
@@ -22,6 +25,7 @@ export default function MyListingsPage() {
   const [showLoader, setShowLoader] = useState(true);
   const [project, setProject] = useState({});
   const [marker, setMarker] = useState({ lat: 49.2827, lng: -123.1207 });
+  const [imageFile, setImageFile] = useState(null);
 
   var months = [
     "January",
@@ -62,6 +66,28 @@ export default function MyListingsPage() {
     });
   };
 
+  const onFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+  const uploadFile = async (name) => {
+    let storageAccountName = "whatsonpresalestorage";
+    let sasToken = SASTOKEN;
+    const blobService = new BlobServiceClient(
+      `https://${storageAccountName}.blob.core.windows.net/?${sasToken}`
+    );
+    //get container - full public read access
+    const containerClient = blobService.getContainerClient("myfile");
+    await containerClient.createIfNotExists({
+      access: "container",
+    });
+    //create blobClient for container
+    const blobClient = containerClient.getBlockBlobClient(name);
+    //set mimetype as determined from borwser with file upload control
+    const options = { blobHTTPHeaders: { blobContentType: imageFile.type } };
+    //upload file
+    await blobClient.uploadBrowserData(imageFile, options);
+  };
+
   const getlistingbyID = async (id) => {
     const result = await axios.get(`${BASEURL + id}`, {
       headers: {
@@ -74,7 +100,16 @@ export default function MyListingsPage() {
 
   const updateListing = async (e) => {
     e.preventDefault();
-    const result = await axios.put(BASEURL, project, {
+    var projectData;
+    const picname = uuidv4();
+    if (imageFile != null) {
+      uploadFile(picname);
+      projectData = { ...project, projectImage: picname };
+    } else {
+      projectData = { ...project };
+    }
+
+    const result = await axios.put(BASEURL, projectData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -265,20 +300,15 @@ export default function MyListingsPage() {
                               htmlFor="projectImage"
                               className="block text-sm font-medium text-gray-700"
                             >
-                              Image URL
+                              Image
                             </label>
                             <div className="mt-1 flex rounded-md shadow-sm">
-                              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                                https://
-                              </span>
                               <input
-                                type="text"
+                                type="file"
                                 name="projectImage"
                                 id="projectImage"
                                 className="form-input focus:outline flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 focus:ring-chairgreen-400 focus:border-chairgreen-400"
-                                placeholder="www.example.com/images/img001.jpg"
-                                defaultValue={project.projectImage}
-                                onChange={onChange}
+                                onChange={onFileChange}
                               />
                             </div>
                           </div>

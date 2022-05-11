@@ -5,16 +5,16 @@ import axios from "axios";
 import blankPic from "../images/defaultProfilePic.jpg";
 import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
 import { v4 as uuidv4 } from "uuid";
+
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/";
-const SASTOKEN =
-  "sv=2020-08-04&ss=b&srt=sco&sp=rwdlacitfx&se=2022-05-15T15:18:54Z&st=2022-05-11T07:18:54Z&spr=https&sig=TdrQYDZH6bSBF%2BbSlBQDd%2FVXP1FylTpT5qa%2FB%2F6gM%2F0%3D";
+const SASTOKEN = process.env.REACT_APP_SAS_KEY;
+const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 export default function ProfilePage() {
   const [profile, setProfile] = useState({ userDetails: {}, role: "" });
   const [languages, setLanguages] = useState([]);
   const [realtorLanguanges, setRealtorLanguages] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   let naviagte = useNavigate();
-  const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 
   useEffect(() => {
     async function getUserProfile() {

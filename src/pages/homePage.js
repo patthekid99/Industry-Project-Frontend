@@ -28,7 +28,6 @@ export default function TestMap() {
   const [marker, setMarker] = useState({ lat: 49.2827, lng: -123.1207 });
   const [token, setToken] = useState("");
 
-
   useEffect(() => {
     async function getListings() {
       setTimeout(() => {
@@ -207,7 +206,6 @@ export default function TestMap() {
     }, 500);
   };
 
-
   return (
     <>
       {showLoader ? (
@@ -382,7 +380,11 @@ export default function TestMap() {
 
                 <div className="mb:px-2 md:flex md:mb-4">
                   {/* map container */}
-                  <div className={`${showDetails ? "hidden md:hidden lg:hidden" : ""} md:flex md:w-1/2 lg:w-1/2 my-4 mx-2 shadow-lg `}>
+                  <div
+                    className={`${
+                      showDetails ? "hidden md:hidden lg:hidden" : ""
+                    } md:flex md:w-1/2 lg:w-1/2 my-4 mx-2 shadow-lg `}
+                  >
                     <div style={{ width: "100%" }}>
                       <MapContainer
                         center={[49.2827, -123.1207]}
@@ -437,8 +439,12 @@ export default function TestMap() {
                                     </p>
                                   </div>
                                   <div>
-                                    <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500"
-                                            onClick={()=>showListing(element.project.id)}>
+                                    <button
+                                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500"
+                                      onClick={() =>
+                                        showListing(element.project.id)
+                                      }
+                                    >
                                       Read More
                                     </button>
                                   </div>
@@ -475,8 +481,10 @@ export default function TestMap() {
                             </p>
                           </div>
                           <div className="m-2">
-                            <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500"
-                                    onClick={()=>showListing(i.project.projectId)}>
+                            <button
+                              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-600 hover:bg-chairgreen-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500"
+                              onClick={() => showListing(i.project.projectId)}
+                            >
                               Read More
                             </button>
                           </div>
