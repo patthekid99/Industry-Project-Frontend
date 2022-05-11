@@ -248,6 +248,21 @@ export default function Header() {
                     <Disclosure.Button>{item.name}</Disclosure.Button>
                   </Link>
                 ))}
+                {user.role === "Developer" ? (
+                      <Link
+                        className={classNames(
+                          "/listings" === location.pathname
+                            ? "bg-chairgreen-50 border-chairgreen-500 text-chairgreen-900"
+                            : "border-transparent text-chairgreen-600 hover:bg-chairgreen-50 hover:border-chairgreen-300 hover:text-chairgreen-800",
+                          "block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                        )}
+                        to={"/listings"}
+                      >
+                        <Disclosure.Button>MY LISTINGS</Disclosure.Button>
+                      </Link>
+                    ) : (
+                      ""
+                    )}
               </div>
               <div className="pt-4 pb-3 border-t border-gray-200">
                 {user.length == 0 ? (
@@ -321,7 +336,7 @@ export default function Header() {
                       </Link>
                       <Link
                         className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                        to={"/login"}
+                        to={"/"}
                         onClick={() => localStorage.removeItem("myData")}
                       >
                         <Disclosure.Button>Sign out</Disclosure.Button>
