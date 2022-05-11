@@ -3,6 +3,8 @@ import axios from "axios";
 import { ChevronLeftIcon } from "@heroicons/react/solid";
 import blankPic from "../images/defaultProfilePic.jpg";
 
+const baseURL = process.env.REACT_APP_GLOBAL_API + "api/"
+
 const devKeys = [
   { name: "Email", value: "email", link: false },
   { name: "Phone", value: "phoneNumber", link: false },
@@ -39,11 +41,11 @@ export default function FindDeveloper() {
   useEffect(() => {
     async function getDevelopers() {
       const results = await axios.get(
-        "https://localhost:44340/api/directory/developers"
+        baseURL + "directory/developers"
       );
       const result = results.data;
       const defaultDev = await axios.get(
-        `https://localhost:44340/api/directory/developers/${result[0].developerID}`
+        baseURL + `directory/developers/${result[0].developerID}`
       );
       const dev = defaultDev.data;
       setDevelopers(result);
@@ -54,7 +56,7 @@ export default function FindDeveloper() {
 
   async function updateSelectedDeveloper(id) {
     const result = await axios.get(
-      `https://localhost:44340/api/directory/developers/${id}`
+      baseURL + `directory/developers/${id}`
     );
     setDevSelected(result.data);
     setShowContacts(false);
@@ -63,7 +65,7 @@ export default function FindDeveloper() {
   async function deleteReview(id) {
     var mydata = JSON.parse(localStorage.getItem("myData"));
     const result = await axios.delete(
-      `https://localhost:44340/api/review/developer/${id}`,
+      baseURL + `review/developer/${id}`,
       {
         headers: {
           Authorization: `Bearer ${mydata.tokenString}`,
@@ -75,8 +77,9 @@ export default function FindDeveloper() {
 
   const getUserReviews = async () => {
     var mydata = JSON.parse(localStorage.getItem("myData"));
-    const result = await axios
-      .get("https://localhost:44340/api/Profile", {
+    if(mydata != null) {
+      const result = await axios
+      .get(baseURL + "Profile", {
         headers: {
           Authorization: `Bearer ${mydata.tokenString}`,
         },
@@ -91,16 +94,24 @@ export default function FindDeveloper() {
         setReviews(true);
         setPostReview({ comment: "", starRating: 5 });
       });
+    }
+    else {
+      setUser({ userDetails: { email: "email" }, role: "" });
+      setReviews(true);
+      setPostReview({ comment: "", starRating: 5 });
+    }
+    
   };
 
-  const postReview = async () => {
+  const postReview = async (e) => {
+    e.preventDefault()
     var mydata = JSON.parse(localStorage.getItem("myData"));
     const data = {
       comment: postReviewBody.comment,
       starRating: postReviewBody.starRating,
     };
     const results = await axios.post(
-      `https://localhost:44340/api/review/developer/${devSelected.developer.developerId}`,
+      baseURL + `review/developer/${devSelected.developer.developerId}`,
       data,
       {
         headers: {
@@ -108,6 +119,7 @@ export default function FindDeveloper() {
         },
       }
     );
+    updateSelectedDeveloper(devSelected.developer.developerId)
   };
 
   const searchDevelopers = async (e) => {
@@ -116,16 +128,16 @@ export default function FindDeveloper() {
     const trimed = e.target.value.split(" ").join("");
     if (!trimed) {
       result = await axios.get(
-        `https://localhost:44340/api/directory/developers`
+        baseURL + "directory/developers"
       );
     } else {
       result = await axios.get(
-        `https://localhost:44340/api/directory/developers/name/${trimed}`
+        baseURL + `directory/developers/name/${trimed}`
       );
     }
     if (result.data.length > 0) {
       const updateSelected = await axios.get(
-        `https://localhost:44340/api/directory/developers/${result.data[0].developerID}`
+        baseURL + `directory/developers/${result.data[0].developerID}`
       );
       setDevelopers(result.data);
       setDevSelected(updateSelected.data);
@@ -138,15 +150,15 @@ export default function FindDeveloper() {
     var result;
     if (!e.target.value) {
       result = await axios.get(
-        `https://localhost:44340/api/directory/developers`
+        baseURL + "directory/developers"
       );
     } else {
       result = await axios.get(
-        `https://localhost:44340/api/directory/developers/rating/${e.target.value}`
+        baseURL + `developers/rating/${e.target.value}`
       );
     }
     const updateSelected = await axios.get(
-      `https://localhost:44340/api/directory/developers/${result.data[0].developerID}`
+      baseURL + `directory/developers/${result.data[0].developerID}`
     );
     setDevelopers(result.data);
     setDevSelected(updateSelected.data);
@@ -193,7 +205,7 @@ export default function FindDeveloper() {
                   id="sort-by"
                   name="sort-by"
                   onChange={sortByRating}
-                  className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-chairgreen-500 focus:border-chairgreen-500"
                 >
                   <option value={""}> Sort By </option>
                   <option value={"ascending"}>Rating, Asc</option>
@@ -375,7 +387,7 @@ export default function FindDeveloper() {
                       <div className="bg-gray-50 my-6 flex-none">
                         <div className="flex space-x-3">
                           <div className="min-w-0 flex-1">
-                            <form onSubmit={postReview}>
+                            <form onSubmit={(e) => postReview(e)}>
                               <label className="text-base font-medium text-gray-900 mx-4">
                                 Post a Review
                               </label>
@@ -456,6 +468,7 @@ export default function FindDeveloper() {
                 ) : (
                   <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                     {devKeys.map((d) => (
+                      devSelected.developer[d.value] ?
                       <div key={d.value} className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500">
                           {d.name}
@@ -475,7 +488,7 @@ export default function FindDeveloper() {
                             {devSelected.developer[d.value]}
                           </dd>
                         )}
-                      </div>
+                      </div> : null
                     ))}
                   </dl>
                 )}

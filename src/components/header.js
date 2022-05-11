@@ -6,16 +6,13 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import blankPic from "../images/defaultProfilePic.jpg"
 
+const baseURL = process.env.REACT_APP_GLOBAL_API + "api/profile";
+
 const navigation = [
   { name: "HOME", link: "/home", current: true },
   { name: "FIND A REALTOR", link: "/realtordirectory", current: false },
   {name: "FIND A DEVELOPER", link: "/developerdirectory", current: false},
-  { name: "MY LISTINGS", link: "/listings", current: false },
-];
-
-const userNavigation = [
-  { name: "Your Profile", link: "/profile" },
-  { name: "Sign out", link: "/login" },
+  
 ];
 
 function classNames(...classes) {
@@ -29,7 +26,7 @@ export default function Header() {
     async function getUser() {
       var mydata = JSON.parse(localStorage.getItem("myData"));
       await axios
-        .get("https://localhost:44340/api/Profile", {
+        .get(baseURL, {
           headers: {
             Authorization: `Bearer ${mydata.tokenString}`,
           },
@@ -82,6 +79,17 @@ export default function Header() {
                         {item.name}
                       </Link>
                     ))}
+                    {user.role === "Developer" ? 
+                    <Link
+                      className={classNames(
+                        "/listings" === location.pathname
+                          ? "border-chairgreen-500 text-gray-900"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                        "inline-flex items-center px-1 pt-1 border-b-4 text-sm font-medium")}
+                        to={"/listings"}
+                    >
+                      MY LISTINGS
+                    </Link> : ""}
                   </div>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
@@ -91,26 +99,28 @@ export default function Header() {
                         type="button"
                         className="relative inline-flex items-center mr-4 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-500 hover:bg-chairgreen-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-chairgreen-800 focus:ring-chairgreen-500"
                       >
-                        <Link to={"/register"}>Sign up</Link>
+                        <Link to={"/"}>Sign up</Link>
                       </button>
                       <button
                         type="button"
                         className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gold-500 hover:bg-gold-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gold-800 focus:ring-gold-500"
                       >
-                        <Link to={"/login"}>Login</Link>
+                        <Link to={"/"}>Login</Link>
                       </button>
                     </div>
                   ) : (
                     <Menu as="div" className="ml-3 relative">
                       <div>
-                        <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500">
                           <span className="sr-only">Open user menu</span>
+                          <p className="mr-2">{user.userDetails.email}</p>
                           {user.role === "Developer" ? (
-                            <img
-                              className="h-8 w-8 rounded-full"
-                              src={user.userDetails.logo ? user.userDetails.log : blankPic}
-                              alt=""
-                            />
+                            <>
+                              <img
+                                className="h-8 w-8 rounded-full"
+                                src={user.userDetails.logo ? user.userDetails.log : blankPic}
+                                alt="" />
+                              </>
                           ) : (
                             <img
                               className="h-8 w-8 rounded-full"
@@ -144,7 +154,7 @@ export default function Header() {
                           </Menu.Item>
                           <Menu.Item key={"signout"}>
                           <Link
-                              to={"/login"}
+                              to={"/"}
                               onClick={() => localStorage.removeItem("myData")}
                               className={classNames(
                                 "/login" === location.pathname
@@ -198,13 +208,13 @@ export default function Header() {
                       type="button"
                       className="relative inline-flex items-center mx-4 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-500 hover:bg-chairgreen-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-chairgreen-800 focus:ring-chairgreen-500"
                     >
-                      <Link to={"/register"}>Sign up</Link>
+                      <Link to={"/"}>Sign up</Link>
                     </button>
                     <button
                       type="button"
                       className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gold-500 hover:bg-gold-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gold-800 focus:ring-gold-500"
                     >
-                      <Link to={"/login"}>Login</Link>
+                      <Link to={"/"}>Login</Link>
                     </button>
                   </div>
                 ) : (

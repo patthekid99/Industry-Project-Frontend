@@ -4,6 +4,8 @@ import Select from 'react-select';
 import axios from "axios";
 import blankPic from "../images/defaultProfilePic.jpg";
 
+const baseURL = process.env.REACT_APP_GLOBAL_API + "api/";
+
 export default function ProfilePage() {
   const [profile, setProfile] = useState({ userDetails: {}, role: "" });
   const [languages, setLanguages] = useState([])
@@ -13,21 +15,23 @@ export default function ProfilePage() {
   useEffect(() => {
     async function getUserProfile() {
       var mydata = JSON.parse(localStorage.getItem("myData"));
-      const result = await axios.get("https://localhost:44340/api/Profile", {
+      const result = await axios.get(baseURL + "Profile", {
         headers: {
           Authorization: `Bearer ${mydata.tokenString}`,
         },
       });
       const resultProfile = result.data;
       if(resultProfile.role === "Realtor") {
-        const realtor = await axios.get("https://localhost:44340/api/Profile/realtor", {
+        const realtor = await axios.get(baseURL + "Profile/realtor", {
           headers: {
             Authorization: `Bearer ${mydata.tokenString}`,
           },
         })
        setRealtorLanguages(realtor.data.languages)
+       const langKeys = realtor.data.languages.map((l) => l.languageId)
+       resultProfile.userDetails.languageKeys = langKeys
       }
-      const languages = await axios.get("https://localhost:44340/api/language/")
+      const languages = await axios.get(baseURL + "language")
       setProfile(resultProfile);
       setLanguages(languages.data)
     }
@@ -37,8 +41,7 @@ export default function ProfilePage() {
   const updateProfile = async (e) => {
     e.preventDefault();
     var mydata = JSON.parse(localStorage.getItem("myData"));
-    const result = await axios.put(
-      `https://localhost:44340/api/Profile/${profile.role}`,
+    const result = await axios.put(baseURL + `Profile/${profile.role}`,
       profile.userDetails,
       {
         headers: {
@@ -381,6 +384,7 @@ export default function ProfilePage() {
                       >
                         Website
                       </label>
+                      
                       <input
                         type="text"
                         name="website"
