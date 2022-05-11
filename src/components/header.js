@@ -4,16 +4,22 @@ import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import logo from "../images/logo.jpg";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import blankPic from "../images/defaultProfilePic.jpg"
+import blankPic from "../images/defaultProfilePic.jpg";
+import BounceLoader from "react-spinners/FadeLoader";
+import { css } from "@emotion/react";
 
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/profile";
 
 const navigation = [
   { name: "HOME", link: "/home", current: true },
   { name: "FIND A REALTOR", link: "/realtordirectory", current: false },
-  {name: "FIND A DEVELOPER", link: "/developerdirectory", current: false},
-  
+  { name: "FIND A DEVELOPER", link: "/developerdirectory", current: false },
 ];
+const override = css`
+  display: block;
+  margin: auto;
+  border-color: red;
+`;
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -21,8 +27,12 @@ function classNames(...classes) {
 
 export default function Header() {
   const [user, setUser] = useState([]);
+  const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
+    setTimeout(() => {
+      setShowLoader(false);
+    }, 600);
     async function getUser() {
       var mydata = JSON.parse(localStorage.getItem("myData"));
       await axios
@@ -79,95 +89,130 @@ export default function Header() {
                         {item.name}
                       </Link>
                     ))}
-                    {user.role === "Developer" ? 
-                    <Link
-                      className={classNames(
-                        "/listings" === location.pathname
-                          ? "border-chairgreen-500 text-gray-900"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                        "inline-flex items-center px-1 pt-1 border-b-4 text-sm font-medium")}
+                    {user.role === "Developer" ? (
+                      <Link
+                        className={classNames(
+                          "/listings" === location.pathname
+                            ? "border-chairgreen-500 text-gray-900"
+                            : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                          "inline-flex items-center px-1 pt-1 border-b-4 text-sm font-medium"
+                        )}
                         to={"/listings"}
-                    >
-                      MY LISTINGS
-                    </Link> : ""}
+                      >
+                        MY LISTINGS
+                      </Link>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
+
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                  {user.length == 0 ? (
-                    <div className="flex-shrink-0">
-                      <button
-                        type="button"
-                        className="relative inline-flex items-center mr-4 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-500 hover:bg-chairgreen-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-chairgreen-800 focus:ring-chairgreen-500"
-                      >
-                        <Link to={"/"}>Sign up</Link>
-                      </button>
-                      <button
-                        type="button"
-                        className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gold-500 hover:bg-gold-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gold-800 focus:ring-gold-500"
-                      >
-                        <Link to={"/"}>Login</Link>
-                      </button>
+                  {showLoader ? (
+                    <div className="flex justify-center items-center h-screen">
+                      <BounceLoader
+                        color={"#2e5351"}
+                        loading={true}
+                        css={override}
+                        size={60}
+                      />
                     </div>
                   ) : (
-                    <Menu as="div" className="ml-3 relative">
-                      <div>
-                        <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500">
-                          <span className="sr-only">Open user menu</span>
-                          <p className="mr-2">{user.userDetails.email}</p>
-                          {user.role === "Developer" ? (
-                            <>
-                              <img
-                                className="h-8 w-8 rounded-full"
-                                src={user.userDetails.logo ? user.userDetails.log : blankPic}
-                                alt="" />
-                              </>
-                          ) : (
-                            <img
-                              className="h-8 w-8 rounded-full"
-                              src={user.userDetails.profilePic ? user.userDetails.profilePic : blankPic}
-                              alt=""
-                            />
-                          )}
-                        </Menu.Button>
-                      </div>
-                      <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
-                      >
-                        <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                          <Menu.Item key={"profile"}>
-                            <Link
-                              to={"/profile"}
-                              className={classNames(
-                                "/profile" === location.pathname
-                                  ? "bg-gray-100"
-                                  : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}>
-                                Your Profile
-                            </Link>
-                          </Menu.Item>
-                          <Menu.Item key={"signout"}>
-                          <Link
-                              to={"/"}
-                              onClick={() => localStorage.removeItem("myData")}
-                              className={classNames(
-                                "/login" === location.pathname
-                                  ? "bg-gray-100"
-                                  : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}>
-                                Sign out
-                            </Link>
-                          </Menu.Item>
-                        </Menu.Items>
-                      </Transition>
-                    </Menu>
+                    <>
+                      {user.length == 0 ? (
+                        <div className="flex-shrink-0">
+                          <Link to={"/"}>
+                            <button
+                              type="button"
+                              className="relative inline-flex items-center mr-4 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-500 hover:bg-chairgreen-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-chairgreen-800 focus:ring-chairgreen-500"
+                            >
+                              Sign up
+                            </button>
+                          </Link>
+                          <Link to={"/"}>
+                            <button
+                              type="button"
+                              className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gold-500 hover:bg-gold-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gold-800 focus:ring-gold-500"
+                            >
+                              Login
+                            </button>
+                          </Link>
+                        </div>
+                      ) : (
+                        <Menu as="div" className="ml-3 relative">
+                          <div>
+                            <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500">
+                              <span className="sr-only">Open user menu</span>
+                              <p className="mr-2">{user.userDetails.email}</p>
+                              {user.role === "Developer" ? (
+                                <>
+                                  <img
+                                    className="h-8 w-8 rounded-full"
+                                    src={
+                                      user.userDetails.logo
+                                        ? user.userDetails.log
+                                        : blankPic
+                                    }
+                                    alt=""
+                                  />
+                                </>
+                              ) : (
+                                <img
+                                  className="h-8 w-8 rounded-full"
+                                  src={
+                                    user.userDetails.profilePic
+                                      ? user.userDetails.profilePic
+                                      : blankPic
+                                  }
+                                  alt=""
+                                />
+                              )}
+                            </Menu.Button>
+                          </div>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-200"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              <Menu.Item key={"profile"}>
+                                <Link
+                                  to={"/profile"}
+                                  className={classNames(
+                                    "/profile" === location.pathname
+                                      ? "bg-gray-100"
+                                      : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
+                                  )}
+                                >
+                                  Your Profile
+                                </Link>
+                              </Menu.Item>
+                              <Menu.Item key={"signout"}>
+                                <Link
+                                  to={"/"}
+                                  onClick={() =>
+                                    localStorage.removeItem("myData")
+                                  }
+                                  className={classNames(
+                                    "/login" === location.pathname
+                                      ? "bg-gray-100"
+                                      : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
+                                  )}
+                                >
+                                  Sign out
+                                </Link>
+                              </Menu.Item>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                      )}
+                    </>
                   )}
                 </div>
                 <div className="-mr-2 flex items-center sm:hidden">
@@ -204,18 +249,22 @@ export default function Header() {
               <div className="pt-4 pb-3 border-t border-gray-200">
                 {user.length == 0 ? (
                   <div className="flex-shrink-0">
-                    <button
-                      type="button"
-                      className="relative inline-flex items-center mx-4 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-500 hover:bg-chairgreen-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-chairgreen-800 focus:ring-chairgreen-500"
-                    >
-                      <Link to={"/"}>Sign up</Link>
-                    </button>
-                    <button
-                      type="button"
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gold-500 hover:bg-gold-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gold-800 focus:ring-gold-500"
-                    >
-                      <Link to={"/"}>Login</Link>
-                    </button>
+                    <Link to={"/"}>
+                      <button
+                        type="button"
+                        className="relative inline-flex items-center mx-4 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-chairgreen-500 hover:bg-chairgreen-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-chairgreen-800 focus:ring-chairgreen-500"
+                      >
+                        Sign up
+                      </button>
+                    </Link>
+                    <Link to={"/"}>
+                      <button
+                        type="button"
+                        className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gold-500 hover:bg-gold-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gold-800 focus:ring-gold-500"
+                      >
+                        Login
+                      </button>
+                    </Link>
                   </div>
                 ) : (
                   <>
@@ -257,7 +306,7 @@ export default function Header() {
                         className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                         to={"/profile"}
                       >
-                         <Disclosure.Button>Your Profile</Disclosure.Button>
+                        <Disclosure.Button>Your Profile</Disclosure.Button>
                       </Link>
                       <Link
                         className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
@@ -266,8 +315,6 @@ export default function Header() {
                       >
                         <Disclosure.Button>Sign out</Disclosure.Button>
                       </Link>
-                      
-
                     </div>
                   </>
                 )}

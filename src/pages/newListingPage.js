@@ -15,11 +15,14 @@ export default function NewListingPage() {
   const getDeveloper = async () => {
     var mydata = JSON.parse(localStorage.getItem("myData"));
     setToken(mydata.tokenString);
-    const result = await axios.get("https://localhost:44340/api/Profile", {
-      headers: {
-        Authorization: `Bearer ${mydata.tokenString}`,
-      },
-    });
+    const result = await axios.get(
+      `${process.env.REACT_APP_GLOBAL_API}api/Profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${mydata.tokenString}`,
+        },
+      }
+    );
     setProject({ developerId: result.data.userDetails.developerId });
   };
 
@@ -34,7 +37,7 @@ export default function NewListingPage() {
   const addListing = async (e) => {
     e.preventDefault();
     const result = await axios.post(
-      "https://localhost:44340/api/listing",
+      `${process.env.REACT_APP_GLOBAL_API}api/Listing`,
       project,
       {
         headers: {
