@@ -1,19 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { ChevronLeftIcon, TrashIcon } from "@heroicons/react/solid";
+import { ChevronLeftIcon } from "@heroicons/react/solid";
 import blankPic from "../images/defaultProfilePic.jpg";
 
-const realtorKeys = [
+const devKeys = [
   { name: "Email", value: "email", link: false },
-  { name: "Company Name", value: "companyName", link: false },
   { name: "Phone", value: "phoneNumber", link: false },
-  { name: "Average Rating", value: "avgStarRating", link: false },
   { name: "Website", value: "website", link: true },
-  { name: "LinkedIn", value: "linkedIn", link: true },
-  { name: "Twitter", value: "twitter", link: true },
-  { name: "Youtube", value: "youtube", link: true },
-  { name: "Instagram", value: "instagram", link: true },
-  { name: "Facebook", value: "facebook", link: true },
+  { name: "Average Rating", value: "avgStarRating", link: false },
 ];
 
 const ratingOptions = [
@@ -28,68 +22,55 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function FindRealtor() {
-  const [state, setState] = useState({
-    showContacts: true,
-    realtors: [],
-    realtorSelected: { realtor: {}, languages: [], reviews: [] },
-    showReviews: false,
+export default function FindDeveloper() {
+  const [showContacts, setShowContacts] = useState(true);
+  const [developers, setDevelopers] = useState([]);
+  const [devSelected, setDevSelected] = useState({
+    developer: {},
     reviews: [],
+  });
+  const [showReviews, setReviews] = useState(false);
+  const [postReviewBody, setPostReview] = useState({
     comment: "",
     starRating: 5,
-    languages: [],
-    companies: [],
-    user: [{ userDetails: { email: "email" }, role: "" }],
   });
+  const [user, setUser] = useState({});
 
   useEffect(() => {
-    async function getRealtors() {
+    async function getDevelopers() {
       const results = await axios.get(
-        "https://localhost:44340/api/directory/realtors"
+        "https://localhost:44340/api/directory/developers"
       );
       const result = results.data;
-      const defaultRealtor = await axios.get(
-        `https://localhost:44340/api/directory/realtors/${result[0].realtorID}`
+      const defaultDev = await axios.get(
+        `https://localhost:44340/api/directory/developers/${result[0].developerID}`
       );
-      const realtor = defaultRealtor.data;
-      const languages = await axios.get(
-        "https://localhost:44340/api/language/"
-      );
-      const language = languages.data;
-      const companies = [
-        ...new Set(result.map((realtor) => realtor.companyName)),
-      ]; //change to companyName when available
-      setState({
-        ...state,
-        realtors: result,
-        realtorSelected: realtor,
-        languages: language,
-        companies: companies,
-      });
+      const dev = defaultDev.data;
+      setDevelopers(result);
+      setDevSelected(dev);
     }
-    getRealtors();
+    getDevelopers();
   }, []);
 
-  async function updateSelectedRealtor(id) {
+  async function updateSelectedDeveloper(id) {
     const result = await axios.get(
-      `https://localhost:44340/api/directory/realtors/${id}`
+      `https://localhost:44340/api/directory/developers/${id}`
     );
-    setState({ ...state, realtorSelected: result.data, showContacts: false });
-    console.log(result.data);
-    console.log(id);
+    setDevSelected(result.data);
+    setShowContacts(false);
   }
 
   async function deleteReview(id) {
     var mydata = JSON.parse(localStorage.getItem("myData"));
     const result = await axios.delete(
-      `https://localhost:44340/api/review/realtor/${id}`,
+      `https://localhost:44340/api/review/developer/${id}`,
       {
         headers: {
           Authorization: `Bearer ${mydata.tokenString}`,
         },
       }
     );
-    updateSelectedRealtor(result.data.realtorId);
+    updateSelectedDeveloper(result.data.developerId);
   }
 
   const getUserReviews = async () => {
@@ -101,32 +82,25 @@ export default function FindRealtor() {
         },
       })
       .then(function (res) {
-        setState({
-          ...state,
-          user: res.data,
-          showReviews: true,
-          comment: "",
-          starRating: 5,
-        });
-        console.log(res.data);
+        setUser(res.data);
+        setReviews(true);
+        setPostReview({ comment: "", starRating: 5 });
       })
       .catch(function (error) {
-        setState({
-          ...state,
-          user: { userDetails: { email: "email" }, role: "" },
-          showReviews: true,
-          comment: "",
-          starRating: 5,
-        });
-        console.log(error);
+        setUser({ userDetails: { email: "email" }, role: "" });
+        setReviews(true);
+        setPostReview({ comment: "", starRating: 5 });
       });
   };
 
   const postReview = async () => {
     var mydata = JSON.parse(localStorage.getItem("myData"));
-    const data = { comment: state.comment, starRating: state.starRating };
+    const data = {
+      comment: postReviewBody.comment,
+      starRating: postReviewBody.starRating,
+    };
     const results = await axios.post(
-      `https://localhost:44340/api/review/realtor/${state.realtorSelected.realtor.realtorId}`,
+      `https://localhost:44340/api/review/developer/${devSelected.developer.developerId}`,
       data,
       {
         headers: {
@@ -136,84 +110,27 @@ export default function FindRealtor() {
     );
   };
 
-  const searchRealtors = async (e) => {
+  const searchDevelopers = async (e) => {
     var result;
     console.log(e.target.value);
     const trimed = e.target.value.split(" ").join("");
     if (!trimed) {
       result = await axios.get(
-        `https://localhost:44340/api/directory/realtors`
+        `https://localhost:44340/api/directory/developers`
       );
     } else {
       result = await axios.get(
-        `https://localhost:44340/api/directory/realtors/name/${trimed}`
+        `https://localhost:44340/api/directory/developers/name/${trimed}`
       );
     }
     if (result.data.length > 0) {
       const updateSelected = await axios.get(
-        `https://localhost:44340/api/directory/realtors/${result.data[0].realtorID}`
+        `https://localhost:44340/api/directory/developers/${result.data[0].developerID}`
       );
-      setState({
-        ...state,
-        realtors: result.data,
-        realtorSelected: updateSelected.data,
-      });
+      setDevelopers(result.data);
+      setDevSelected(updateSelected.data);
     } else {
-      setState({ ...state, realtors: result.data });
-    }
-  };
-
-  const filterByLanguage = async (e) => {
-    var result;
-    console.log(e.target.value);
-    if (!e.target.value) {
-      result = await axios.get(
-        `https://localhost:44340/api/directory/realtors`
-      );
-    } else {
-      result = await axios.get(
-        `https://localhost:44340/api/directory/realtors/lang/${e.target.value}`
-      );
-    }
-    if (result.data.length > 0) {
-      const updateSelected = await axios.get(
-        `https://localhost:44340/api/directory/realtors/${result.data[0].realtorID}`
-      );
-      setState({
-        ...state,
-        realtors: result.data,
-        realtorSelected: updateSelected.data,
-      });
-    } else {
-      setState({ ...state, realtors: result.data });
-    }
-  };
-
-  const filterByCompany = async (e) => {
-    var result;
-    console.log(e.target.value);
-    const trimed = e.target.value.split(" ").join("");
-    console.log(trimed);
-    if (!trimed) {
-      result = await axios.get(
-        `https://localhost:44340/api/directory/realtors`
-      );
-    } else {
-      result = await axios.get(
-        `https://localhost:44340/api/directory/realtors/company/${trimed}`
-      );
-    }
-    if (result.data.length > 0) {
-      const updateSelected = await axios.get(
-        `https://localhost:44340/api/directory/realtors/${result.data[0].realtorID}`
-      );
-      setState({
-        ...state,
-        realtors: result.data,
-        realtorSelected: updateSelected.data,
-      });
-    } else {
-      setState({ ...state, realtors: result.data });
+      setDevelopers(result.data);
     }
   };
 
@@ -221,59 +138,53 @@ export default function FindRealtor() {
     var result;
     if (!e.target.value) {
       result = await axios.get(
-        `https://localhost:44340/api/directory/realtors`
+        `https://localhost:44340/api/directory/developers`
       );
     } else {
       result = await axios.get(
-        `https://localhost:44340/api/directory/realtors/rating/${e.target.value}`
+        `https://localhost:44340/api/directory/developers/rating/${e.target.value}`
       );
     }
     const updateSelected = await axios.get(
-      `https://localhost:44340/api/directory/realtors/${result.data[0].realtorID}`
+      `https://localhost:44340/api/directory/developers/${result.data[0].developerID}`
     );
-    setState({
-      ...state,
-      realtors: result.data,
-      realtorSelected: updateSelected.data,
-    });
+    setDevelopers(result.data);
+    setDevSelected(updateSelected.data);
   };
 
   const onChange = (e) => {
     e.persist();
-    setState({ ...state, [e.target.name]: e.target.value });
-    console.log(state.starRating);
+    setPostReview({ ...postReviewBody, [e.target.name]: e.target.value });
   };
 
   return (
     <div className="min-h-screen w-full flex antialiased bg-gray-100 overflow-hidden sm:p-10">
-      <div className="flex-1 flex flex-col max-w-7xl mx-auto sm:rounded-[24px] bg-white">
+      <div className="flex-1 flex flex-col max-w-7xl mx-auto sm:rounded-[24px] bg-white ">
         <main className="flex-grow flex flex-row min-h-0">
           <section
-            className={`flex flex-col flex-none overflow-auto transition-all duration-300 ease-in-out lg:max-w-xs md:w-2/5  ${
-              state.showContacts ? "w-full group" : "w-0 group"
+            className={`flex flex-col flex-none overflow-auto transition-all duration-300 ease-in-out lg:max-w-xs md:w-2/5 ${
+              showContacts ? "w-full group" : "w-0 group"
             }`}
           >
             <div className="search-box p-4 flex-none">
-              <form onsubmit="">
-                <div className="relative">
-                  <label>
-                    <input
-                      className="rounded-full py-2 pr-10 pl-10 w-4/5 border border-gray-300 focus:border-gray-700 bg-white focus:bg-white focus:outline-none focus:shadow-md "
-                      type="text"
-                      placeholder="Search Realtors"
-                      onChange={searchRealtors}
-                    />
-                    <span className="absolute top-0 left-0 mt-2 ml-3 inline-block">
-                      <svg viewBox="0 0 24 24" className="w-6 h-6">
-                        <path
-                          fill="#bbb"
-                          d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"
-                        />
-                      </svg>
-                    </span>
-                  </label>
-                </div>
-              </form>
+              <div className="relative">
+                <label>
+                  <input
+                    className="rounded-full py-2 pr-10 pl-10 w-4/5 border border-gray-300 focus:border-gray-700 bg-white focus:bg-white focus:outline-none focus:shadow-md "
+                    type="text"
+                    placeholder="Search Realtors"
+                    onChange={searchDevelopers}
+                  />
+                  <span className="absolute top-0 left-0 mt-2 ml-3 inline-block">
+                    <svg viewBox="0 0 24 24" className="w-6 h-6">
+                      <path
+                        fill="#bbb"
+                        d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"
+                      />
+                    </svg>
+                  </span>
+                </label>
+              </div>
               <span className="relative z-0 inline-flex shadow-sm rounded-md mt-2">
                 <label htmlFor="sort-by" className="sr-only">
                   Sort by Review
@@ -282,54 +193,29 @@ export default function FindRealtor() {
                   id="sort-by"
                   name="sort-by"
                   onChange={sortByRating}
-                  className="w-1/3 relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value={""}> Sort By </option>
                   <option value={"ascending"}>Rating, Asc</option>
                   <option value={"descending"}>Rating, Desc</option>
                 </select>
-                <select
-                  id="languages"
-                  name="languages"
-                  onChange={filterByLanguage}
-                  className="-ml-px w-1/3 realtive inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value={""}> Languages </option>
-                  {state.languages.map((language) => (
-                    <option value={language.languageId}>
-                      {" "}
-                      {language.languageName}{" "}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  id="company"
-                  name="company"
-                  onChange={filterByCompany}
-                  className="-ml-px w-1/3 relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value={""}> Company </option>
-                  {state.companies.map((company) => (
-                    <option>{company}</option>
-                  ))}
-                </select>
               </span>
             </div>
             <div className="contacts p-2 flex-1 overflow-y-scroll h-fit md:max-h-screen">
-              {state.realtors.map((r) => (
+              {developers.map((d) => (
                 <div
                   className="flex justify-between items-center p-3 hover:bg-gray-200 rounded-lg relative"
-                  onClick={() => updateSelectedRealtor(r.realtorID)}
+                  onClick={() => updateSelectedDeveloper(d.developerID)}
                 >
                   <div className="w-16 h-16 relative flex flex-shrink-0">
                     <img
                       className="shadow-md rounded-full w-full h-full object-cover"
-                      src={r.profilePic ? r.profilePic : blankPic}
+                      src={d.logo ? d.logo : blankPic}
                       alt=""
                     />
                   </div>
                   <div className="flex-auto min-w-0 ml-4 mr-6 md:block group-hover:block">
-                    <p>{r.firstName + " " + r.lastName}</p>
+                    <p>{d.developerName}</p>
                   </div>
                 </div>
               ))}
@@ -343,7 +229,7 @@ export default function FindRealtor() {
               <button
                 href="#"
                 className="inline-flex items-center space-x-3 text-sm font-medium text-gray-900"
-                onClick={() => setState({ ...state, showContacts: true })}
+                onClick={() => setShowContacts(true)}
               >
                 <ChevronLeftIcon
                   className="-ml-2 h-5 w-5 text-gray-400"
@@ -353,9 +239,7 @@ export default function FindRealtor() {
               </button>
             </nav>
             <article
-              className={`md: block ${
-                state.showContacts ? "hidden md:block" : ""
-              }`}
+              className={`md: block ${showContacts ? "hidden md:block" : ""}`}
             >
               {/* Profile header */}
               <div>
@@ -366,14 +250,14 @@ export default function FindRealtor() {
                     alt=""
                   />
                 </div>
-                <div className="md:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
                     <div className="flex">
                       <img
                         className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
                         src={
-                          state.realtorSelected.realtor.profilePic
-                            ? state.realtorSelected.realtor.profilePic
+                          devSelected.developer.logo
+                            ? devSelected.developer.logo
                             : blankPic
                         }
                         alt=""
@@ -382,18 +266,14 @@ export default function FindRealtor() {
                     <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                       <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
                         <h1 className="text-2xl font-bold truncate">
-                          {state.realtorSelected.realtor.firstName +
-                            " " +
-                            state.realtorSelected.realtor.lastName}
+                          {devSelected.developer.developerName}
                         </h1>
                       </div>
                     </div>
                   </div>
                   <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
                     <h1 className="text-2xl font-bold text-gray-900 truncate">
-                      {state.realtorSelected.realtor.firstName +
-                        " " +
-                        state.realtorSelected.realtor.lastName}
+                      {devSelected.developer.developerName}
                     </h1>
                   </div>
                 </div>
@@ -407,21 +287,19 @@ export default function FindRealtor() {
                       <a
                         key="profile"
                         className={classNames(
-                          state.showReviews === false
+                          showReviews === false
                             ? "border-chairgreen-500 text-gray-900"
                             : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
                           "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
                         )}
-                        onClick={() =>
-                          setState({ ...state, showReviews: false })
-                        }
+                        onClick={() => setReviews(false)}
                       >
                         Profile
                       </a>
                       <a
                         key="reviews"
                         className={classNames(
-                          state.showReviews === true
+                          showReviews === true
                             ? "border-chairgreen-500 text-gray-900"
                             : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
                           "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
@@ -437,11 +315,11 @@ export default function FindRealtor() {
 
               {/* Description list */}
               <div className="mt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                {state.showReviews ? (
+                {showReviews ? (
                   <>
                     <div className="min-h-full mx-auto grid grid-cols-1 sm:px-6">
-                      <ul role="list" className="space-y-6 ">
-                        {state.realtorSelected.reviews.map((review) => (
+                      <ul role="list" className="space-y-8">
+                        {devSelected.reviews.map((review) => (
                           <li key={review.reviewID}>
                             <div className="flex space-x-3">
                               <div className="flex-shrink-0">
@@ -466,7 +344,7 @@ export default function FindRealtor() {
                                       review.potentialBuyer.lastName}
                                   </a>
                                 </div>
-                                <div className="m-1 text-sm text-gray-700">
+                                <div className="mt-1 text-sm text-gray-700">
                                   <p className="break-all">{review.comment}</p>
                                 </div>
                                 <div className="mt-2 text-sm space-x-2">
@@ -474,7 +352,7 @@ export default function FindRealtor() {
                                     {review.starRating + " STARS"}
                                   </span>
                                   {review.potentialBuyer.email ===
-                                  state.user.userDetails.email ? (
+                                  user.userDetails.email ? (
                                     <span
                                       className="text-md px-2 py-1 rounded-md bg-red-500 text-indigo-50 font-medium cursor-pointer"
                                       onClick={() =>
@@ -493,7 +371,7 @@ export default function FindRealtor() {
                         ))}
                       </ul>
                     </div>
-                    {state.user.role === "PPOwner" ? (
+                    {user.role === "PPOwner" ? (
                       <div className="bg-gray-50 my-6 flex-none">
                         <div className="flex space-x-3">
                           <div className="min-w-0 flex-1">
@@ -520,12 +398,13 @@ export default function FindRealtor() {
                                         name="notification-method"
                                         type="radio"
                                         defaultChecked={
-                                          ratingMethod.value == state.starRating
+                                          ratingMethod.value ==
+                                          postReviewBody.starRating
                                         }
                                         className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                                         onChange={() =>
-                                          setState({
-                                            ...state,
+                                          setPostReview({
+                                            ...postReviewBody,
                                             starRating: ratingMethod.value,
                                           })
                                         }
@@ -576,51 +455,28 @@ export default function FindRealtor() {
                   </>
                 ) : (
                   <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                    {realtorKeys.map((r) => (
-                      <div key={r.value} className="sm:col-span-1">
+                    {devKeys.map((d) => (
+                      <div key={d.value} className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500">
-                          {r.name}
+                          {d.name}
                         </dt>
-                        {r.link ? (
+                        {d.link ? (
                           <dd className="mt-1 text-sm text-grey-900">
                             <a
                               target={"_blank"}
-                              href={"https://"+state.realtorSelected.realtor[r.value]}
+                              href={"https://"+devSelected.developer[d.value]}
                               className="text-blue-500"
                             >
-                              {state.realtorSelected.realtor[r.value]}
+                              {devSelected.developer[d.value]}
                             </a>
                           </dd>
                         ) : (
                           <dd className="mt-1 text-sm text-grey-900">
-                            {state.realtorSelected.realtor[r.value]}
+                            {devSelected.developer[d.value]}
                           </dd>
                         )}
                       </div>
                     ))}
-
-                    <div className="sm:col-span-1">
-                      <dt className="text-sm font-medium text-gray-500">
-                        Languages
-                      </dt>
-
-                      {state.realtorSelected.languages.map((lang) => (
-                        <dd className="mt-1 text-sm text-gray-900">
-                          {lang.languageName}
-                        </dd>
-                      ))}
-                    </div>
-                    <div className="sm:col-span-2">
-                      <dt className="text-sm font-medium text-gray-500">
-                        About
-                      </dt>
-                      <dd
-                        className="mt-1 max-w-prose text-sm text-gray-900 space-y-5"
-                        dangerouslySetInnerHTML={{
-                          __html: state.realtorSelected.realtor.bioText,
-                        }}
-                      />
-                    </div>
                   </dl>
                 )}
               </div>
