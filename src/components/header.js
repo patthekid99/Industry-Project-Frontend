@@ -9,6 +9,8 @@ import BounceLoader from "react-spinners/FadeLoader";
 import { css } from "@emotion/react";
 
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/profile";
+const imageBucketURL =
+  "https://whatsonpresalestorage.blob.core.windows.net/myfile/";
 
 const navigation = [
   { name: "HOME", link: "/home", current: true },
@@ -150,7 +152,7 @@ export default function Header() {
                                     className="h-8 w-8 rounded-full"
                                     src={
                                       user.userDetails.logo
-                                        ? user.userDetails.log
+                                        ? user.userDetails.logo
                                         : blankPic
                                     }
                                     alt=""
@@ -161,7 +163,8 @@ export default function Header() {
                                   className="h-8 w-8 rounded-full"
                                   src={
                                     user.userDetails.profilePic
-                                      ? user.userDetails.profilePic
+                                      ? imageBucketURL +
+                                        user.userDetails.profilePic
                                       : blankPic
                                   }
                                   alt=""

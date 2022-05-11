@@ -480,7 +480,7 @@ export default function FindDeveloper() {
                                 <dd className="mt-1 text-sm text-grey-900">
                                   <a
                                     target={"_blank"}
-                                    href={devSelected.developer[d.value]}
+                                    href={"https://"+devSelected.developer[d.value]}
                                     className="text-blue-500"
                                   >
                                     {devSelected.developer[d.value]}

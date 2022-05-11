@@ -602,7 +602,7 @@ export default function FindRealtor() {
                                   <a
                                     target={"_blank"}
                                     href={
-                                      state.realtorSelected.realtor[r.value]
+                                      "https://"+state.realtorSelected.realtor[r.value]
                                     }
                                     className="text-blue-500"
                                   >

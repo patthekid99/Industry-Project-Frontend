@@ -330,7 +330,7 @@ export default function TestMap() {
                     {listings.map((i) => (
                       <div className="w-64 max-h-394 p-2 bg-white rounded-xl transform transition-all shadow-lg">
                         <img
-                          className="rounded-t min-w-full"
+                          className="rounded-t min-w-full h-40"
                           src={
                             i.project.projectImage
                               ? i.project.projectImage

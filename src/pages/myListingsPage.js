@@ -1,17 +1,26 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../myListing.css";
 import { Link } from "react-router-dom";
 import defaultImage from "../images/project-default.png";
 import BounceLoader from "react-spinners/FadeLoader";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import Geocode from "react-geocode";
+
+const APIKEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+Geocode.setApiKey(APIKEY);
+Geocode.setRegion("ca");
+Geocode.setLocationType("ROOFTOP");
 
 export default function MyListingsPage() {
   const [listings, setListings] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [token, setToken] = useState("");
   const BASEURL = process.env.REACT_APP_GLOBAL_API + "api/listing/";
   const [showLoader, setShowLoader] = useState(true);
   const [project, setProject] = useState({});
+  const [marker, setMarker] = useState({ lat: 49.2827, lng: -123.1207 });
+  
   var months = [
     "January",
     "February",
@@ -87,6 +96,27 @@ export default function MyListingsPage() {
       setShowModal(true);
     }, 500);
   };
+
+  const showListing = async(id) => {
+    getlistingbyID(id);
+    Geocode.fromAddress(
+        project.streetNum +
+        " " +
+        project.streetName +
+        " " +
+        project.city +
+        " " +
+        project.postalCode
+    ).then((response) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        project.lat = lat;
+        project.lng = lng;
+        setMarker({ lat: lat, lng: lng });
+    });
+    setTimeout(() => {
+      setShowDetails(true);
+    },500);
+  }
 
   return (
     <>
@@ -296,6 +326,84 @@ export default function MyListingsPage() {
               </div>
             </>
           ) : null}
+
+          {showDetails ? (
+            <>
+              <div className="justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-9 z-50 outline-none focus:outline-none">
+                <div className="relative w-auto my-6 mx-auto max-w-7xl">
+                  <div className="border-0 rounded-lg shadow-lg flex flex-col w-full bg-white outline-none focus:outline-none">
+                    <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t ">
+                    
+                      <main>
+                        <div className="max-w-7xl mx-auto sm:rounded-[24px] bg-white">
+                        <section className="text-gray-600 body-font overflow-hidden">
+                            <div className="container px-5 py-5 mx-auto">
+                            <button
+                        className="bg-transparent border-0 text-black float-right"
+                        onClick={() => setShowDetails(false)}>
+                        <span className="text-white opacity-7 h-6 w-6 text-xl block bg-chairgreen-500 py-0 leading-5 rounded-full">
+                          x
+                        </span>
+                      </button>
+                              <div className="lg:w-4/5 mx-auto flex flex-wrap">
+                                <div className="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
+                                <h2 className="text-sm title-font text-gray-500 tracking-widest">
+                                    {project.developerName}
+                                </h2>
+                                <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
+                                    {project.projectName}
+                                </h1>
+                                <p className="leading-relaxed mb-4">
+                                  {project.projectDescription}
+                                </p>
+                                <div className="flex border-t border-gray-200 py-2">
+                                    <span className="text-gray-500">Address</span>
+                                    <span className="ml-auto text-gray-900">
+                                    {project.streetNum +
+                                        " " +
+                                        project.streetName +
+                                        ", " +
+                                        project.city}
+                                    </span>
+                                </div>
+                                <div className="flex border-t border-b mb-6 border-gray-200 py-2">
+                                    <span className="text-gray-500">Project Status</span>
+                                    <span className="ml-auto text-gray-900">
+                                    {project.projectStatus}
+                                    </span>
+                                </div>
+                                <div className="flex pb-2" style={{ height: "30vh" }}>
+                                    <MapContainer
+                                    center={[marker.lat, marker.lng]}
+                                    zoom={14}
+                                    scrollWheelZoom={false}
+                                    style={{ height: "30vh"}}
+                                    >
+                                    <TileLayer
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                        url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+                                    />
+                                    <Marker position={[marker.lat, marker.lng]}></Marker>
+                                    </MapContainer>
+                                </div>
+                                </div>
+                                <img
+                                alt="ecommerce"
+                                className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
+                                src={project.projectImage}
+                                />
+                            </div>
+                            </div>
+                        </section>
+                        </div>
+                      </main>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ): null}
+
           <div className="min-h-screen py-10 bg-gray-100">
             <div className="max-w-7xl sm:px-6 lg:px-8 mb:rounded-[24px] mx-auto bg-white container">
               <div className="py-4 grid grid-cols-3 grid-flow-cols gap-9 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 sm:gap-x-6 mb:grid-cols-1">

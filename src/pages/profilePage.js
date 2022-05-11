@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Select from 'react-select';
+import Select from "react-select";
 import axios from "axios";
 import blankPic from "../images/defaultProfilePic.jpg";
-
+import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
+import { v4 as uuidv4 } from "uuid";
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/";
-
+const SASTOKEN =
+  "sv=2020-08-04&ss=b&srt=sco&sp=rwdlacitfx&se=2022-05-15T15:18:54Z&st=2022-05-11T07:18:54Z&spr=https&sig=TdrQYDZH6bSBF%2BbSlBQDd%2FVXP1FylTpT5qa%2FB%2F6gM%2F0%3D";
 export default function ProfilePage() {
   const [profile, setProfile] = useState({ userDetails: {}, role: "" });
-  const [languages, setLanguages] = useState([])
-  const [realtorLanguanges, setRealtorLanguages] = useState([])
-  let naviagte = useNavigate()
+  const [languages, setLanguages] = useState([]);
+  const [realtorLanguanges, setRealtorLanguages] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  let naviagte = useNavigate();
 
   useEffect(() => {
     async function getUserProfile() {
@@ -21,37 +24,42 @@ export default function ProfilePage() {
         },
       });
       const resultProfile = result.data;
-      if(resultProfile.role === "Realtor") {
+      if (resultProfile.role === "Realtor") {
         const realtor = await axios.get(baseURL + "Profile/realtor", {
           headers: {
             Authorization: `Bearer ${mydata.tokenString}`,
           },
-        })
-       setRealtorLanguages(realtor.data.languages)
-       const langKeys = realtor.data.languages.map((l) => l.languageId)
-       resultProfile.userDetails.languageKeys = langKeys
+        });
+        setRealtorLanguages(realtor.data.languages);
+        const langKeys = realtor.data.languages.map((l) => l.languageId);
+        resultProfile.userDetails.languageKeys = langKeys;
       }
-      const languages = await axios.get(baseURL + "language")
+      const languages = await axios.get(baseURL + "language");
       setProfile(resultProfile);
-      setLanguages(languages.data)
+      setLanguages(languages.data);
     }
     getUserProfile();
   }, []);
 
+  const onFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
   const updateProfile = async (e) => {
     e.preventDefault();
+    const picname = uuidv4();
+    uploadFile(picname);
+    var profileData = { ...profile.userDetails, profilePic: picname };
     var mydata = JSON.parse(localStorage.getItem("myData"));
-    const result = await axios.put(baseURL + `Profile/${profile.role}`,
-      profile.userDetails,
-      {
+    const result = await axios
+      .put(baseURL + `Profile/${profile.role}`, profileData, {
         headers: {
           Authorization: `Bearer ${mydata.tokenString}`,
         },
-      }
-    ).then((res) => {
-      naviagte("/home")
-    });
-    
+      })
+      .then((res) => {
+        naviagte("/home");
+      });
   };
 
   const languageOptions = languages.map((language) => ({
@@ -61,22 +69,47 @@ export default function ProfilePage() {
 
   const defaultLanguages = languageOptions.filter((lo) => {
     return realtorLanguanges.some((rl) => {
-      return lo.value === rl.languageId
-    })
-  })
-
+      return lo.value === rl.languageId;
+    });
+  });
 
   const onChange = (e) => {
     e.persist();
     setProfile({
       ...profile,
       userDetails: { ...profile.userDetails, [e.target.name]: e.target.value },
-    })
+    });
+  };
+  const uploadFile = async (name) => {
+    setProfile({
+      ...profile,
+      userDetails: { ...profile.userDetails, ProfilePic: name },
+    });
+
+    let storageAccountName = "whatsonpresalestorage";
+    let sasToken = SASTOKEN;
+    const blobService = new BlobServiceClient(
+      `https://${storageAccountName}.blob.core.windows.net/?${sasToken}`
+    );
+    //get container - full public read access
+    const containerClient = blobService.getContainerClient("myfile");
+    await containerClient.createIfNotExists({
+      access: "container",
+    });
+    //create blobClient for container
+    const blobClient = containerClient.getBlockBlobClient(name);
+    //set mimetype as determined from borwser with file upload control
+    const options = { blobHTTPHeaders: { blobContentType: imageFile.type } };
+    //upload file
+    await blobClient.uploadBrowserData(imageFile, options);
   };
 
   function onLangChnage(e) {
-    const filteredLang = e.map(l => l.value)
-    setProfile({...profile, userDetails: {...profile.userDetails, languageKeys: filteredLang}})
+    const filteredLang = e.map((l) => l.value);
+    setProfile({
+      ...profile,
+      userDetails: { ...profile.userDetails, languageKeys: filteredLang },
+    });
   }
 
   return (
@@ -116,7 +149,7 @@ export default function ProfilePage() {
                           name="firstName"
                           id="firstName"
                           autoComplete="given-name"
-                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                           defaultValue={profile.userDetails.firstName}
                           onChange={onChange}
                         />
@@ -165,14 +198,19 @@ export default function ProfilePage() {
                         >
                           Website
                         </label>
-                        <input
-                          type="text"
-                          name="website"
-                          id="website"
-                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                          defaultValue={profile.userDetails.website}
-                          onChange={onChange}
-                        />
+                        <div className="mt-1 flex rounded-md shadow-sm">
+                          <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                            https://
+                          </span>
+                          <input
+                            type="url"
+                            name="website"
+                            id="website"
+                            className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                            defaultValue={profile.userDetails.website}
+                            onChange={onChange}
+                          />
+                        </div>
                       </div>{" "}
                     </>
                   )}
@@ -189,7 +227,7 @@ export default function ProfilePage() {
                           type="text"
                           name="companyName"
                           id="companyName"
-                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                           defaultValue={profile.userDetails.companyName}
                           onChange={onChange}
                         />
@@ -201,7 +239,7 @@ export default function ProfilePage() {
                         >
                           Languages
                         </label>
-                        <Select className="mt-1 block rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                        <Select className="form-select mt-1 block rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                         options={languageOptions}
                         isMulti={true}
                         defaultValue={defaultLanguages}
@@ -219,16 +257,23 @@ export default function ProfilePage() {
                         >
                           Email address
                         </label>
-                        <input
-                          disabled
-                          type="text"
-                          name="email"
-                          id="email"
-                          autoComplete="email"
-                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                          defaultValue={profile.userDetails.email}
-                          onChange={onChange}
-                        />
+                        <div class="mt-1 flex rounded-md shadow-sm">
+                          <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                          </span>
+                          <input
+                            disabled
+                            type="email"
+                            name="email"
+                            id="email"
+                            autoComplete="email"
+                            className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                            defaultValue={profile.userDetails.email}
+                            onChange={onChange}
+                          />
+
+                        </div>
+                        
                       </div>
                       <div className="sm:col-span-3">
                         <label
@@ -238,11 +283,11 @@ export default function ProfilePage() {
                           Phone number
                         </label>
                         <input
-                          type="text"
+                          type="tel"
                           name="phoneNumber"
                           id="phoneNumber"
                           autoComplete="tel"
-                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                           defaultValue={profile.userDetails.phoneNumber}
                           onChange={onChange}
                         />
@@ -292,12 +337,12 @@ export default function ProfilePage() {
                           />
                           <div className="w-full ml-4 flex">
                             <input
-                              type="text"
+                              type="file"
                               name="profilePic"
                               id="profilePic"
-                              className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                              className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                               defaultValue={profile.userDetails.profilePic}
-                              onChange={onChange}
+                              onChange={onFileChange}
                             />
                           </div>
                         </div>
@@ -317,7 +362,7 @@ export default function ProfilePage() {
                           id="bioText"
                           name="bioText"
                           rows={4}
-                          className="block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="form-textarea block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                           defaultValue={profile.userDetails.bioText}
                           onChange={onChange}
                         />
@@ -349,16 +394,21 @@ export default function ProfilePage() {
                       >
                         Email address
                       </label>
-                      <input
-                        disabled
-                        type="text"
-                        name="email"
-                        id="email"
-                        autoComplete="email"
-                        className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue={profile.userDetails.email}
-                        onChange={onChange}
-                      />
+                      <div class="mt-1 flex rounded-md shadow-sm">
+                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                        </span>
+                        <input
+                          disabled
+                          type="email"
+                          name="email"
+                          id="email"
+                          autoComplete="email"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          defaultValue={profile.userDetails.email}
+                          onChange={onChange}
+                        />
+                      </div>
                     </div>
                     <div className="sm:col-span-3">
                       <label
@@ -368,11 +418,11 @@ export default function ProfilePage() {
                         Phone number
                       </label>
                       <input
-                        type="text"
+                        type="tel"
                         name="phoneNumber"
                         id="phoneNumber"
                         autoComplete="tel"
-                        className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                        className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                         defaultValue={profile.userDetails.phoneNumber}
                         onChange={onChange}
                       />
@@ -384,15 +434,19 @@ export default function ProfilePage() {
                       >
                         Website
                       </label>
-                      
-                      <input
-                        type="text"
-                        name="website"
-                        id="website"
-                        className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue={profile.userDetails.website}
-                        onChange={onChange}
-                      />
+                      <div className="mt-1 flex rounded-md shadow-sm">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          https://
+                        </span>
+                        <input
+                          type="url"
+                          name="website"
+                          id="website"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          defaultValue={profile.userDetails.website}
+                          onChange={onChange}
+                        />
+                      </div>
                     </div>
                     <div className="sm:col-span-3">
                       <label
@@ -401,14 +455,19 @@ export default function ProfilePage() {
                       >
                         LinkedIn
                       </label>
-                      <input
-                        type="text"
-                        name="linkedIn"
-                        id="linkedIn"
-                        className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue={profile.userDetails.linkedIn}
-                        onChange={onChange}
-                      />
+                      <div className="mt-1 flex rounded-md shadow-sm">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          https://
+                        </span>
+                        <input
+                          type="url"
+                          name="linkedIn"
+                          id="linkedIn"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          defaultValue={profile.userDetails.linkedIn}
+                          onChange={onChange}
+                        />
+                      </div>
                     </div>
                     <div className="sm:col-span-3">
                       <label
@@ -417,14 +476,19 @@ export default function ProfilePage() {
                       >
                         Youtube
                       </label>
-                      <input
-                        type="text"
-                        name="youtube"
-                        id="youtube"
-                        className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue={profile.userDetails.youtube}
-                        onChange={onChange}
-                      />
+                      <div className="mt-1 flex rounded-md shadow-sm">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          https://
+                        </span>
+                        <input
+                          type="url"
+                          name="youtube"
+                          id="youtube"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          defaultValue={profile.userDetails.youtube}
+                          onChange={onChange}
+                        />
+                      </div>
                     </div>
                     <div className="sm:col-span-3">
                       <label
@@ -433,14 +497,19 @@ export default function ProfilePage() {
                       >
                         Twitter
                       </label>
-                      <input
-                        type="text"
-                        name="twitter"
-                        id="twitter"
-                        className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue={profile.userDetails.twitter}
-                        onChange={onChange}
-                      />
+                      <div className="mt-1 flex rounded-md shadow-sm">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          https://
+                        </span>
+                        <input
+                          type="url"
+                          name="twitter"
+                          id="twitter"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          defaultValue={profile.userDetails.twitter}
+                          onChange={onChange}
+                        />
+                      </div>
                     </div>
                     <div className="sm:col-span-3">
                       <label
@@ -449,14 +518,19 @@ export default function ProfilePage() {
                       >
                         Facebook
                       </label>
-                      <input
-                        type="text"
-                        name="facebook"
-                        id="facebook"
-                        className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue={profile.userDetails.facebook}
-                        onChange={onChange}
-                      />
+                      <div className="mt-1 flex rounded-md shadow-sm">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          https://
+                        </span>
+                        <input
+                          type="url"
+                          name="facebook"
+                          id="facebook"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          defaultValue={profile.userDetails.facebook}
+                          onChange={onChange}
+                        />
+                      </div>
                     </div>
                     <div className="sm:col-span-3">
                       <label
@@ -465,14 +539,19 @@ export default function ProfilePage() {
                       >
                         Instagram
                       </label>
-                      <input
-                        type="text"
-                        name="instagram"
-                        id="instagram"
-                        className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue={profile.userDetails.instagram}
-                        onChange={onChange}
-                      />
+                      <div className="mt-1 flex rounded-md shadow-sm">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          https://
+                        </span>
+                        <input
+                          type="url"
+                          name="instagram"
+                          id="instagram"
+                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          defaultValue={profile.userDetails.instagram}
+                          onChange={onChange}
+                        />
+                      </div>
                     </div>
                   </div>
                 ) : (
