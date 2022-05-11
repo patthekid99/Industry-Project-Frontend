@@ -3,20 +3,23 @@ import axios from "axios";
 import { ChevronLeftIcon, TrashIcon } from "@heroicons/react/solid";
 import blankPic from "../images/defaultProfilePic.jpg";
 import BounceLoader from "react-spinners/FadeLoader";
+import FeatherIcon from "feather-icons-react";
 
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/";
 
+const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
+
 const realtorKeys = [
-  { name: "Email", value: "email", link: false },
-  { name: "Company Name", value: "companyName", link: false },
-  { name: "Phone", value: "phoneNumber", link: false },
-  { name: "Average Rating", value: "avgStarRating", link: false },
-  { name: "Website", value: "website", link: true },
-  { name: "LinkedIn", value: "linkedIn", link: true },
-  { name: "Twitter", value: "twitter", link: true },
-  { name: "Youtube", value: "youtube", link: true },
-  { name: "Instagram", value: "instagram", link: true },
-  { name: "Facebook", value: "facebook", link: true },
+  { name: "Email", value: "email", link: false, icon: "mail" },
+  { name: "Company Name", value: "companyName", link: false, icon: "tablet" },
+  { name: "Phone", value: "phoneNumber", link: false, icon: "phone" },
+  { name: "Average Rating", value: "avgStarRating", link: false, icon: "hash" },
+  { name: "Website", value: "website", link: true, icon: "airplay" },
+  { name: "LinkedIn", value: "linkedIn", link: true, icon: "linkedin" },
+  { name: "Twitter", value: "twitter", link: true, icon: "twitter" },
+  { name: "Youtube", value: "youtube", link: true, icon: "youtube" },
+  { name: "Instagram", value: "instagram", link: true, icon: "instagram" },
+  { name: "Facebook", value: "facebook", link: true, icon: "facebook" },
 ];
 
 const ratingOptions = [
@@ -330,7 +333,11 @@ export default function FindRealtor() {
                       <div className="w-16 h-16 relative flex flex-shrink-0">
                         <img
                           className="shadow-md rounded-full w-full h-full object-cover"
-                          src={r.profilePic ? r.profilePic : blankPic}
+                          src={
+                            r.profilePic
+                              ? IMAGEBUCKETURL + r.profilePic
+                              : blankPic
+                          }
                           alt=""
                         />
                       </div>
@@ -379,7 +386,8 @@ export default function FindRealtor() {
                             className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
                             src={
                               state.realtorSelected.realtor.profilePic
-                                ? state.realtorSelected.realtor.profilePic
+                                ? IMAGEBUCKETURL +
+                                  state.realtorSelected.realtor.profilePic
                                 : blankPic
                             }
                             alt=""
@@ -458,7 +466,8 @@ export default function FindRealtor() {
                                       className="h-10 w-10 rounded-full"
                                       src={
                                         review.potentialBuyer.profilePic
-                                          ? review.potentialBuyer.profilePic
+                                          ? IMAGEBUCKETURL +
+                                            review.potentialBuyer.profilePic
                                           : blankPic
                                       }
                                       alt=""
@@ -595,6 +604,7 @@ export default function FindRealtor() {
                           state.realtorSelected.realtor[r.value] ? (
                             <div key={r.value} className="sm:col-span-1">
                               <dt className="text-sm font-medium text-gray-500">
+                                <FeatherIcon icon={r.icon} color="#2e5351" />{" "}
                                 {r.name}
                               </dt>
                               {r.link ? (
@@ -602,7 +612,8 @@ export default function FindRealtor() {
                                   <a
                                     target={"_blank"}
                                     href={
-                                      "https://"+state.realtorSelected.realtor[r.value]
+                                      "https://" +
+                                      state.realtorSelected.realtor[r.value]
                                     }
                                     className="text-blue-500"
                                   >
@@ -620,7 +631,7 @@ export default function FindRealtor() {
                         {state.realtorSelected.languages.length > 0 ? (
                           <div className="sm:col-span-1">
                             <dt className="text-sm font-medium text-gray-500">
-                              Languages
+                              <FeatherIcon icon="globe" /> Languages
                             </dt>
 
                             {state.realtorSelected.languages.map((lang) => (

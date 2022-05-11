@@ -6,10 +6,12 @@ import BounceLoader from "react-spinners/FadeLoader";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Geocode from "react-geocode";
 
-const APIKEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+const APIKEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 Geocode.setApiKey(APIKEY);
 Geocode.setRegion("ca");
 Geocode.setLocationType("ROOFTOP");
+
+const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 
 export default function MyListingsPage() {
   const [listings, setListings] = useState([]);
@@ -20,7 +22,7 @@ export default function MyListingsPage() {
   const [showLoader, setShowLoader] = useState(true);
   const [project, setProject] = useState({});
   const [marker, setMarker] = useState({ lat: 49.2827, lng: -123.1207 });
-  
+
   var months = [
     "January",
     "February",
@@ -97,10 +99,10 @@ export default function MyListingsPage() {
     }, 500);
   };
 
-  const showListing = async(id) => {
+  const showListing = async (id) => {
     getlistingbyID(id);
     Geocode.fromAddress(
-        project.streetNum +
+      project.streetNum +
         " " +
         project.streetName +
         " " +
@@ -108,15 +110,15 @@ export default function MyListingsPage() {
         " " +
         project.postalCode
     ).then((response) => {
-        const { lat, lng } = response.results[0].geometry.location;
-        project.lat = lat;
-        project.lng = lng;
-        setMarker({ lat: lat, lng: lng });
+      const { lat, lng } = response.results[0].geometry.location;
+      project.lat = lat;
+      project.lng = lng;
+      setMarker({ lat: lat, lng: lng });
     });
     setTimeout(() => {
       setShowDetails(true);
-    },500);
-  }
+    }, 500);
+  };
 
   return (
     <>
@@ -333,68 +335,81 @@ export default function MyListingsPage() {
                 <div className="relative w-auto my-6 mx-auto max-w-7xl">
                   <div className="border-0 rounded-lg shadow-lg flex flex-col w-full bg-white outline-none focus:outline-none">
                     <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t ">
-                    
                       <main>
                         <div className="max-w-7xl mx-auto sm:rounded-[24px] bg-white">
-                        <section className="text-gray-600 body-font overflow-hidden">
+                          <section className="text-gray-600 body-font overflow-hidden">
                             <div className="container px-5 py-5 mx-auto">
-                            <button
-                        className="bg-transparent border-0 text-black float-right"
-                        onClick={() => setShowDetails(false)}>
-                        <span className="text-white opacity-7 h-6 w-6 text-xl block bg-chairgreen-500 py-0 leading-5 rounded-full">
-                          x
-                        </span>
-                      </button>
+                              <button
+                                className="bg-transparent border-0 text-black float-right"
+                                onClick={() => setShowDetails(false)}
+                              >
+                                <span className="text-white opacity-7 h-6 w-6 text-xl block bg-chairgreen-500 py-0 leading-5 rounded-full">
+                                  x
+                                </span>
+                              </button>
                               <div className="lg:w-4/5 mx-auto flex flex-wrap">
                                 <div className="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
-                                <h2 className="text-sm title-font text-gray-500 tracking-widest">
+                                  <h2 className="text-sm title-font text-gray-500 tracking-widest">
                                     {project.developerName}
-                                </h2>
-                                <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
+                                  </h2>
+                                  <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
                                     {project.projectName}
-                                </h1>
-                                <p className="leading-relaxed mb-4">
-                                  {project.projectDescription}
-                                </p>
-                                <div className="flex border-t border-gray-200 py-2">
-                                    <span className="text-gray-500">Address</span>
+                                  </h1>
+                                  <p className="leading-relaxed mb-4">
+                                    {project.projectDescription}
+                                  </p>
+                                  <div className="flex border-t border-gray-200 py-2">
+                                    <span className="text-gray-500">
+                                      Address
+                                    </span>
                                     <span className="ml-auto text-gray-900">
-                                    {project.streetNum +
+                                      {project.streetNum +
                                         " " +
                                         project.streetName +
                                         ", " +
                                         project.city}
                                     </span>
-                                </div>
-                                <div className="flex border-t border-b mb-6 border-gray-200 py-2">
-                                    <span className="text-gray-500">Project Status</span>
-                                    <span className="ml-auto text-gray-900">
-                                    {project.projectStatus}
+                                  </div>
+                                  <div className="flex border-t border-b mb-6 border-gray-200 py-2">
+                                    <span className="text-gray-500">
+                                      Project Status
                                     </span>
-                                </div>
-                                <div className="flex pb-2" style={{ height: "30vh" }}>
+                                    <span className="ml-auto text-gray-900">
+                                      {project.projectStatus}
+                                    </span>
+                                  </div>
+                                  <div
+                                    className="flex pb-2"
+                                    style={{ height: "30vh" }}
+                                  >
                                     <MapContainer
-                                    center={[marker.lat, marker.lng]}
-                                    zoom={14}
-                                    scrollWheelZoom={false}
-                                    style={{ height: "30vh"}}
+                                      center={[marker.lat, marker.lng]}
+                                      zoom={14}
+                                      scrollWheelZoom={false}
+                                      style={{ height: "30vh" }}
                                     >
-                                    <TileLayer
+                                      <TileLayer
                                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                         url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
-                                    />
-                                    <Marker position={[marker.lat, marker.lng]}></Marker>
+                                      />
+                                      <Marker
+                                        position={[marker.lat, marker.lng]}
+                                      ></Marker>
                                     </MapContainer>
-                                </div>
+                                  </div>
                                 </div>
                                 <img
-                                alt="ecommerce"
-                                className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
-                                src={project.projectImage}
+                                  alt="ecommerce"
+                                  className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
+                                  src={
+                                    project.projectImage
+                                      ? IMAGEBUCKETURL + project.projectImage
+                                      : defaultImage
+                                  }
                                 />
+                              </div>
                             </div>
-                            </div>
-                        </section>
+                          </section>
                         </div>
                       </main>
                     </div>
@@ -402,7 +417,7 @@ export default function MyListingsPage() {
                 </div>
               </div>
             </>
-          ): null}
+          ) : null}
 
           <div className="min-h-screen py-10 bg-gray-100">
             <div className="max-w-7xl sm:px-6 lg:px-8 mb:rounded-[24px] mx-auto bg-white container">
@@ -435,7 +450,7 @@ export default function MyListingsPage() {
                             className="rounded-t min-w-full"
                             src={
                               listing.project.projectImage
-                                ? listing.project.projectImage
+                                ? IMAGEBUCKETURL + listing.project.projectImage
                                 : defaultImage
                             }
                             alt={listing.project.projectName}
@@ -465,7 +480,7 @@ export default function MyListingsPage() {
                           className="blur-sm object-cover rounded-t min-w-full min-h-full opacity-100"
                           src={
                             listing.project.projectImage
-                              ? listing.project.projectImage
+                              ? IMAGEBUCKETURL + listing.project.projectImage
                               : defaultImage
                           }
                           alt={listing.project.projectName}
@@ -473,12 +488,14 @@ export default function MyListingsPage() {
                         <div className="absolute p-2 inset-0 opacity-0 hover:opacity-100">
                           <div>
                             <h2 className="block mx-auto sm:px-6 lg:px-8 sm:rounded-[24px] text-center pb-4 font-bold text-2xl ">
-                              <Link
+                              <p
                                 className="text-chairgreen-600 hover:text-gold-500"
-                                to={`/listings/${listing.project.projectId}`}
+                                onClick={() =>
+                                  showListing(listing.project.projectId)
+                                }
                               >
                                 {listing.project.projectName}
-                              </Link>
+                              </p>
                             </h2>
                           </div>
                           <div className="flex flex-col max-h-full">

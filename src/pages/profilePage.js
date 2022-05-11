@@ -14,6 +14,7 @@ export default function ProfilePage() {
   const [realtorLanguanges, setRealtorLanguages] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   let naviagte = useNavigate();
+  const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 
   useEffect(() => {
     async function getUserProfile() {
@@ -47,9 +48,19 @@ export default function ProfilePage() {
 
   const updateProfile = async (e) => {
     e.preventDefault();
+    var profileData;
     const picname = uuidv4();
-    uploadFile(picname);
-    var profileData = { ...profile.userDetails, profilePic: picname };
+    if (imageFile != null) {
+      uploadFile(picname);
+      if (profile.role == "Developer") {
+        profileData = { ...profile.userDetails, logo: picname };
+      } else {
+        profileData = { ...profile.userDetails, profilePic: picname };
+      }
+    } else {
+      profileData = { ...profile.userDetails };
+    }
+
     var mydata = JSON.parse(localStorage.getItem("myData"));
     const result = await axios
       .put(baseURL + `Profile/${profile.role}`, profileData, {
@@ -170,7 +181,7 @@ export default function ProfilePage() {
                           defaultValue={profile.userDetails.lastName}
                           onChange={onChange}
                         />
-                      </div>{" "}
+                      </div>
                     </>
                   ) : (
                     <>
@@ -239,13 +250,13 @@ export default function ProfilePage() {
                         >
                           Languages
                         </label>
-                        <Select className="form-select mt-1 block rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        options={languageOptions}
-                        isMulti={true}
-                        defaultValue={defaultLanguages}
-                        onChange={(e) => onLangChnage(e)}
-                         />
-                       
+                        <Select
+                          className="mt-1 block rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          options={languageOptions}
+                          isMulti={true}
+                          defaultValue={defaultLanguages}
+                          onChange={(e) => onLangChnage(e)}
+                        />
                       </div>
                     </>
                   ) : (
@@ -259,7 +270,13 @@ export default function ProfilePage() {
                         </label>
                         <div class="mt-1 flex rounded-md shadow-sm">
                           <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                            <svg
+                              class="w-4 h-4 fill-current"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                            </svg>
                           </span>
                           <input
                             disabled
@@ -271,9 +288,7 @@ export default function ProfilePage() {
                             defaultValue={profile.userDetails.email}
                             onChange={onChange}
                           />
-
                         </div>
-                        
                       </div>
                       <div className="sm:col-span-3">
                         <label
@@ -306,17 +321,21 @@ export default function ProfilePage() {
                         <div className="mt-1 flex items-center">
                           <img
                             className="inline-block h-12 w-12 rounded-full"
-                            src={profile.userDetails.logo ? profile.userDetails.logo : blankPic}
+                            src={
+                              profile.userDetails.logo
+                                ? IMAGEBUCKETURL + profile.userDetails.logo
+                                : blankPic
+                            }
                             alt=""
                           />
                           <div className="w-full ml-4 flex">
                             <input
-                              type="text"
+                              type="file"
                               name="logo"
                               id="logo"
                               className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                               defaultValue={profile.userDetails.logo}
-                              onChange={onChange}
+                              onChange={onFileChange}
                             />
                           </div>
                         </div>
@@ -332,7 +351,12 @@ export default function ProfilePage() {
                         <div className="mt-1 flex items-center">
                           <img
                             className="inline-block h-12 w-12 rounded-full"
-                            src={profile.userDetails.profilePic ? profile.userDetails.profilePic : blankPic}
+                            src={
+                              profile.userDetails.profilePic
+                                ? IMAGEBUCKETURL +
+                                  profile.userDetails.profilePic
+                                : blankPic
+                            }
                             alt=""
                           />
                           <div className="w-full ml-4 flex">
@@ -396,7 +420,10 @@ export default function ProfilePage() {
                       </label>
                       <div class="mt-1 flex rounded-md shadow-sm">
                         <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                          </svg>
                         </span>
                         <input
                           disabled
@@ -562,9 +589,7 @@ export default function ProfilePage() {
                     type="button"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    <Link to={"/home"}>
-                      Cancel
-                    </Link>
+                    <Link to={"/home"}>Cancel</Link>
                   </button>
                   <button
                     type="submit"

@@ -4,6 +4,7 @@ import { ChevronLeftIcon } from "@heroicons/react/solid";
 import blankPic from "../images/defaultProfilePic.jpg";
 import BounceLoader from "react-spinners/FadeLoader";
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/";
+const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 
 const devKeys = [
   { name: "Email", value: "email", link: false },
@@ -215,7 +216,7 @@ export default function FindDeveloper() {
                       <div className="w-16 h-16 relative flex flex-shrink-0">
                         <img
                           className="shadow-md rounded-full w-full h-full object-cover"
-                          src={d.logo ? d.logo : blankPic}
+                          src={d.logo ? IMAGEBUCKETURL + d.logo : blankPic}
                           alt=""
                         />
                       </div>
@@ -264,7 +265,7 @@ export default function FindDeveloper() {
                             className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
                             src={
                               devSelected.developer.logo
-                                ? devSelected.developer.logo
+                                ? IMAGEBUCKETURL + devSelected.developer.logo
                                 : blankPic
                             }
                             alt=""
@@ -337,7 +338,8 @@ export default function FindDeveloper() {
                                       className="h-10 w-10 rounded-full"
                                       src={
                                         review.potentialBuyer.profilePic
-                                          ? review.potentialBuyer.profilePic
+                                          ? IMAGEBUCKETURL +
+                                            review.potentialBuyer.profilePic
                                           : blankPic
                                       }
                                       alt=""
@@ -480,7 +482,10 @@ export default function FindDeveloper() {
                                 <dd className="mt-1 text-sm text-grey-900">
                                   <a
                                     target={"_blank"}
-                                    href={"https://"+devSelected.developer[d.value]}
+                                    href={
+                                      "https://" +
+                                      devSelected.developer[d.value]
+                                    }
                                     className="text-blue-500"
                                   >
                                     {devSelected.developer[d.value]}

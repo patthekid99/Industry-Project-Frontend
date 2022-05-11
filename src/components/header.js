@@ -9,8 +9,8 @@ import BounceLoader from "react-spinners/FadeLoader";
 import { css } from "@emotion/react";
 
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/profile";
-const imageBucketURL =
-  "https://whatsonpresalestorage.blob.core.windows.net/myfile/";
+
+const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 
 const navigation = [
   { name: "HOME", link: "/home", current: true },
@@ -152,7 +152,7 @@ export default function Header() {
                                     className="h-8 w-8 rounded-full"
                                     src={
                                       user.userDetails.logo
-                                        ? user.userDetails.logo
+                                        ? IMAGEBUCKETURL + user.userDetails.logo
                                         : blankPic
                                     }
                                     alt=""
@@ -163,7 +163,7 @@ export default function Header() {
                                   className="h-8 w-8 rounded-full"
                                   src={
                                     user.userDetails.profilePic
-                                      ? imageBucketURL +
+                                      ? IMAGEBUCKETURL +
                                         user.userDetails.profilePic
                                       : blankPic
                                   }
@@ -276,13 +276,21 @@ export default function Header() {
                         {user.role === "Developer" ? (
                           <img
                             className="h-10 w-10 rounded-full"
-                            src={user.userDetails.logo}
+                            src={
+                              user.userDetails.logo
+                                ? IMAGEBUCKETURL + user.userDetails.logo
+                                : blankPic
+                            }
                             alt=""
                           />
                         ) : (
                           <img
                             className="h-10 w-10 rounded-full"
-                            src={user.userDetails.profilePic}
+                            src={
+                              user.userDetails.profilePic
+                                ? IMAGEBUCKETURL + user.userDetails.profilePic
+                                : blankPic
+                            }
                             alt=""
                           />
                         )}

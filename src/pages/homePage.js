@@ -10,6 +10,8 @@ import BounceLoader from "react-spinners/FadeLoader";
 const APIKEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/home/";
 
+const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
+
 Geocode.setApiKey(APIKEY);
 Geocode.setRegion("ca");
 Geocode.setLocationType("ROOFTOP");
@@ -281,7 +283,8 @@ export default function TestMap() {
                                     className="rounded-t min-w-full"
                                     src={
                                       element.project.projectImage
-                                        ? element.project.projectImage
+                                        ? IMAGEBUCKETURL +
+                                          element.project.projectImage
                                         : defaultImage
                                     }
                                     alt={element.project.projectName}
@@ -333,7 +336,7 @@ export default function TestMap() {
                           className="rounded-t min-w-full h-40"
                           src={
                             i.project.projectImage
-                              ? i.project.projectImage
+                              ? IMAGEBUCKETURL + i.project.projectImage
                               : defaultImage
                           }
                           alt={i.project.projectName}
