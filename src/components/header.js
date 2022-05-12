@@ -14,7 +14,7 @@ const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 
 const navigation = [
   { name: "HOME", link: "/home", current: true },
-  { name: "VIEW/RATE REALTORS", link: "/realtordirectory", current: false },
+  { name: "FIND A REALTOR", link: "/realtordirectory", current: false },
   { name: "VIEW/RATE DEVELOPERS", link: "/developerdirectory", current: false },
 ];
 const override = css`
