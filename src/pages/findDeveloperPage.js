@@ -3,14 +3,15 @@ import axios from "axios";
 import { ChevronLeftIcon } from "@heroicons/react/solid";
 import blankPic from "../images/defaultProfilePic.jpg";
 import BounceLoader from "react-spinners/FadeLoader";
+import FeatherIcon from "feather-icons-react";
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/";
 const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
 
 const devKeys = [
-  { name: "Email", value: "email", link: false },
-  { name: "Phone", value: "phoneNumber", link: false },
-  { name: "Website", value: "website", link: true },
-  { name: "Average Rating", value: "avgStarRating", link: false },
+  { name: "Email", value: "email", icon: "mail", link: false },
+  { name: "Phone", value: "phoneNumber", icon: "phone", link: false },
+  { name: "Website", value: "website", icon: "airplay", link: true },
+  { name: "Average Rating", value: "avgStarRating", icon: "thumbs-up", link: false },
 ];
 
 const ratingOptions = [
@@ -155,6 +156,18 @@ export default function FindDeveloper() {
   const onChange = (e) => {
     e.persist();
     setPostReview({ ...postReviewBody, [e.target.name]: e.target.value });
+  };
+
+  const formatNumber = (phNumber) => {
+    var formatedNumber = phNumber.substring(0,3) + "-" + phNumber.substring(3,6) + "-" + phNumber.substring(6,phNumber.length)
+    return formatedNumber
+  };
+
+  const showStars=(avgratings)=>{
+    var totalStars = 5
+    {[...new Array(totalStars)].map((arr, index) => {
+       index < avgratings ? <FeatherIcon icon="airplay" color="#2e5351" /> : <FeatherIcon icon="star" color="#2e5351" />;
+    })}
   };
 
   return (
@@ -476,6 +489,7 @@ export default function FindDeveloper() {
                           devSelected.developer[d.value] ? (
                             <div key={d.value} className="sm:col-span-1">
                               <dt className="text-sm font-medium text-gray-500">
+                              <FeatherIcon icon={d.icon} color="#2e5351" />{" "}
                                 {d.name}
                               </dt>
                               {d.link ? (
@@ -483,7 +497,6 @@ export default function FindDeveloper() {
                                   <a
                                     target={"_blank"}
                                     href={
-                                      "https://" +
                                       devSelected.developer[d.value]
                                     }
                                     className="text-blue-500"
@@ -493,7 +506,10 @@ export default function FindDeveloper() {
                                 </dd>
                               ) : (
                                 <dd className="mt-1 text-sm text-grey-900">
-                                  {devSelected.developer[d.value]}
+                                  {(d.name.includes("Phone")) ? 
+                                  formatNumber(devSelected.developer[d.value])
+                                  :
+                                  devSelected.developer[d.value]}
                                 </dd>
                               )}
                             </div>

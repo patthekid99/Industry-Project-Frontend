@@ -7,6 +7,7 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Geocode from "react-geocode";
 import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
 import { v4 as uuidv4 } from "uuid";
+import FeatherIcon from "feather-icons-react";
 
 const SASTOKEN = process.env.REACT_APP_SAS_KEY;
 const APIKEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -213,9 +214,11 @@ export default function MyListingsPage() {
                               Street Number
                             </label>
                             <input
-                              type="text"
+                              type="number"
                               name="streetNum"
                               id="streetNum"
+                              inputmode="numeric" 
+                              pattern="\d*"
                               placeholder="Street Number"
                               className="form-input rounded-lg mt-1 p-2 block w-full border-2 border-gray-300 shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-400 focus:border-chairgreen-400"
                               defaultValue={project.streetNum}
@@ -322,14 +325,16 @@ export default function MyListingsPage() {
                             </label>
                             <div className="mt-1 flex rounded-md shadow-sm">
                               <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                                https://
+                                <FeatherIcon icon="airplay" color="#2e5351" />
                               </span>
                               <input
                                 type="text"
                                 name="projectLink"
                                 id="projectLink"
+                                pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                                title="The URL must follow a proper format: https://www.example.com"
+                                placeholder="https://www.example.com"
                                 className="form-input focus:outline focus:ring-chairgreen-500 focus:border-chairgreen-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
-                                placeholder="www.example.com"
                                 defaultValue={project.projectLink}
                                 onChange={onChange}
                               />
@@ -361,7 +366,7 @@ export default function MyListingsPage() {
 
           {showDetails ? (
             <>
-              <div className="justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-9 z-50 outline-none focus:outline-none">
+              <div className="justify-center backdrop-blur-lg bg-black/30 h-screen w-screen items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                 <div className="relative w-auto my-6 mx-auto max-w-7xl">
                   <div className="border-0 rounded-lg shadow-lg flex flex-col w-full bg-white outline-none focus:outline-none">
                     <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t ">

@@ -5,6 +5,7 @@ import axios from "axios";
 import blankPic from "../images/defaultProfilePic.jpg";
 import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
 import { v4 as uuidv4 } from "uuid";
+import FeatherIcon from "feather-icons-react";
 
 const baseURL = process.env.REACT_APP_GLOBAL_API + "api/";
 const SASTOKEN = process.env.REACT_APP_SAS_KEY;
@@ -115,7 +116,7 @@ export default function ProfilePage() {
     await blobClient.uploadBrowserData(imageFile, options);
   };
 
-  function onLangChnage(e) {
+  function onLangChange(e) {
     const filteredLang = e.map((l) => l.value);
     setProfile({
       ...profile,
@@ -160,7 +161,7 @@ export default function ProfilePage() {
                           name="firstName"
                           id="firstName"
                           autoComplete="given-name"
-                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.firstName}
                           onChange={onChange}
                         />
@@ -177,7 +178,7 @@ export default function ProfilePage() {
                           name="lastName"
                           id="lastName"
                           autoComplete="family-name"
-                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.lastName}
                           onChange={onChange}
                         />
@@ -197,7 +198,7 @@ export default function ProfilePage() {
                           name="developerName"
                           id="developerName"
                           autoComplete="given-name"
-                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-blue-500"
+                          className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.developerName}
                           onChange={onChange}
                         />
@@ -211,13 +212,16 @@ export default function ProfilePage() {
                         </label>
                         <div className="mt-1 flex rounded-md shadow-sm">
                           <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                            https://
+                          <FeatherIcon icon="airplay" color="#2e5351" />
                           </span>
                           <input
                             type="url"
                             name="website"
                             id="website"
-                            className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                            pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                            title="The URL must follow a proper format: https://www.example.com"
+                            placeholder="https://www.example.com"
+                            className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                             defaultValue={profile.userDetails.website}
                             onChange={onChange}
                           />
@@ -238,7 +242,7 @@ export default function ProfilePage() {
                           type="text"
                           name="companyName"
                           id="companyName"
-                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.companyName}
                           onChange={onChange}
                         />
@@ -251,11 +255,11 @@ export default function ProfilePage() {
                           Languages
                         </label>
                         <Select
-                          className="mt-1 block rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="mt-1 block rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           options={languageOptions}
                           isMulti={true}
                           defaultValue={defaultLanguages}
-                          onChange={(e) => onLangChnage(e)}
+                          onChange={(e) => onLangChange(e)}
                         />
                       </div>
                     </>
@@ -270,13 +274,7 @@ export default function ProfilePage() {
                         </label>
                         <div class="mt-1 flex rounded-md shadow-sm">
                           <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                            <svg
-                              class="w-4 h-4 fill-current"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                            </svg>
+                            <FeatherIcon icon="mail" color="#2e5351" />
                           </span>
                           <input
                             disabled
@@ -284,7 +282,7 @@ export default function ProfilePage() {
                             name="email"
                             id="email"
                             autoComplete="email"
-                            className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                            className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                             defaultValue={profile.userDetails.email}
                             onChange={onChange}
                           />
@@ -297,15 +295,26 @@ export default function ProfilePage() {
                         >
                           Phone number
                         </label>
-                        <input
-                          type="tel"
-                          name="phoneNumber"
-                          id="phoneNumber"
-                          autoComplete="tel"
-                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                          defaultValue={profile.userDetails.phoneNumber}
-                          onChange={onChange}
-                        />
+                        <div class="mt-1 flex rounded-md shadow-sm">
+                          <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                            <FeatherIcon icon="phone" color="#2e5351" />
+                          </span>
+                          <input
+                            type="tel"
+                            name="phoneNumber"
+                            id="phoneNumber"
+                            autoComplete="tel"
+                            size={10}
+                            maxLength={10}
+                            minLength={10}
+                            pattern="[0-9]+"
+                            title="Please enter number between 0-9"
+                            placeholder="123-4567-8901"
+                            className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
+                            defaultValue={profile.userDetails.phoneNumber}
+                            onChange={onChange}
+                          />
+                        </div>
                       </div>
                     </>
                   )}
@@ -333,7 +342,7 @@ export default function ProfilePage() {
                               type="file"
                               name="logo"
                               id="logo"
-                              className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                              className="mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                               defaultValue={profile.userDetails.logo}
                               onChange={onFileChange}
                             />
@@ -364,7 +373,7 @@ export default function ProfilePage() {
                               type="file"
                               name="profilePic"
                               id="profilePic"
-                              className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                              className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                               defaultValue={profile.userDetails.profilePic}
                               onChange={onFileChange}
                             />
@@ -386,7 +395,7 @@ export default function ProfilePage() {
                           id="bioText"
                           name="bioText"
                           rows={4}
-                          className="form-textarea block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="form-textarea block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.bioText}
                           onChange={onChange}
                         />
@@ -420,10 +429,7 @@ export default function ProfilePage() {
                       </label>
                       <div class="mt-1 flex rounded-md shadow-sm">
                         <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                          </svg>
+                          <FeatherIcon icon="mail" color="#2e5351" />
                         </span>
                         <input
                           disabled
@@ -431,7 +437,7 @@ export default function ProfilePage() {
                           name="email"
                           id="email"
                           autoComplete="email"
-                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.email}
                           onChange={onChange}
                         />
@@ -444,15 +450,26 @@ export default function ProfilePage() {
                       >
                         Phone number
                       </label>
-                      <input
-                        type="tel"
-                        name="phoneNumber"
-                        id="phoneNumber"
-                        autoComplete="tel"
-                        className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue={profile.userDetails.phoneNumber}
-                        onChange={onChange}
-                      />
+                      <div class="mt-1 flex rounded-md shadow-sm">
+                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          <FeatherIcon icon="phone" color="#2e5351" />
+                        </span>
+                        <input
+                          type="tel"
+                          name="phoneNumber"
+                          id="phoneNumber"
+                          autoComplete="tel"
+                          size={10}
+                          maxLength={10}
+                          minLength={10}
+                          pattern="[0-9]+"
+                          title="Please enter number between 0-9"
+                          placeholder="123-4567-8901"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
+                          defaultValue={profile.userDetails.phoneNumber}
+                          onChange={onChange}
+                        />
+                      </div>
                     </div>
                     <div className="sm:col-span-3">
                       <label
@@ -463,13 +480,16 @@ export default function ProfilePage() {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          https://
+                          <FeatherIcon icon="airplay" color="#2e5351" />
                         </span>
                         <input
                           type="url"
                           name="website"
                           id="website"
-                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                          title="The URL must follow a proper format: https://www.example.com"
+                          placeholder="https://www.example.com"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.website}
                           onChange={onChange}
                         />
@@ -484,13 +504,16 @@ export default function ProfilePage() {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          https://
+                        <FeatherIcon icon="linkedin" color="#2e5351" />
                         </span>
                         <input
                           type="url"
                           name="linkedIn"
                           id="linkedIn"
-                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                          title="The URL must follow a proper format: https://www.example.com"
+                          placeholder="https://www.example.com"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.linkedIn}
                           onChange={onChange}
                         />
@@ -505,13 +528,16 @@ export default function ProfilePage() {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          https://
+                          <FeatherIcon icon="youtube" color="#2e5351" />
                         </span>
                         <input
                           type="url"
                           name="youtube"
                           id="youtube"
-                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                          title="The URL must follow a proper format: https://www.example.com"
+                          placeholder="https://www.example.com"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.youtube}
                           onChange={onChange}
                         />
@@ -526,13 +552,16 @@ export default function ProfilePage() {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          https://
+                          <FeatherIcon icon="twitter" color="#2e5351" />
                         </span>
                         <input
                           type="url"
                           name="twitter"
                           id="twitter"
-                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                          title="The URL must follow a proper format: https://www.example.com"
+                          placeholder="https://www.example.com"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.twitter}
                           onChange={onChange}
                         />
@@ -547,13 +576,16 @@ export default function ProfilePage() {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          https://
+                          <FeatherIcon icon="facebook" color="#2e5351" />
                         </span>
                         <input
                           type="url"
                           name="facebook"
                           id="facebook"
-                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                          title="The URL must follow a proper format: https://www.example.com"
+                          placeholder="https://www.example.com"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.facebook}
                           onChange={onChange}
                         />
@@ -568,13 +600,16 @@ export default function ProfilePage() {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          https://
+                          <FeatherIcon icon="instagram" color="#2e5351" />
                         </span>
                         <input
                           type="url"
                           name="instagram"
                           id="instagram"
-                          className="form-input mt-1 p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                          pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                          title="The URL must follow a proper format: https://www.example.com"
+                          placeholder="https://www.example.com"
+                          className="form-input p-2 block w-full border-2 border-gray-300 rounded-r-md shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-500 focus:border-chairgreen-500"
                           defaultValue={profile.userDetails.instagram}
                           onChange={onChange}
                         />
@@ -587,7 +622,7 @@ export default function ProfilePage() {
                 <div className="pt-8 flex justify-end">
                   <button
                     type="button"
-                    className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-chairgreen-500"
                   >
                     <Link to={"/home"}>Cancel</Link>
                   </button>

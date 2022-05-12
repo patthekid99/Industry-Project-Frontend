@@ -185,7 +185,7 @@ export default function TestMap() {
     setProject(resultListing);
   };
 
-  const showListing = async (id) => {
+  const showListing = (id) => {
     getlistingbyID(id);
     Geocode.fromAddress(
       project.streetNum +
@@ -216,10 +216,9 @@ export default function TestMap() {
         <>
           {showDetails ? (
             <>
-              <div className="justify-center items-center overflow-x-hidden overflow-y-hidden fixed inset-9 z-[99] outline-none focus:outline-none">
-                <div className="relative w-auto my-6 mx-auto max-w-7xl">
-                  <div className="border-0 rounded-lg shadow-lg flex flex-col w-full bg-white outline-none focus:outline-none">
-                    <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t ">
+              <div className="backdrop-blur-lg bg-black/30 w-screen h-screen overflow-x-hidden overflow-y-auto fixed inset-0 z-[99] outline-none focus:outline-none">
+                  <div className="border-0 max-w-[70%] m-auto absolute  top-12 inset-x-10 rounded-lg shadow-lg flex flex-col place-items-center bg-white outline-none focus:outline-none">
+                    <div className="flex items-center justify-between p-5 border-b border-solid border-gray-300 rounded-t ">
                       <main>
                         <div className="max-w-7xl mx-auto sm:rounded-[24px] bg-white">
                           <section className="text-gray-600 body-font overflow-hidden">
@@ -299,7 +298,6 @@ export default function TestMap() {
                       </main>
                     </div>
                   </div>
-                </div>
               </div>
             </>
           ) : null}
@@ -404,7 +402,7 @@ export default function TestMap() {
                                   element.project.lng,
                                 ]}
                               >
-                                <Popup autoPanPadding={true}>
+                                <Popup Pan={true}>
                                   <div className="p-1">
                                     <img
                                       className="rounded-t min-w-full"

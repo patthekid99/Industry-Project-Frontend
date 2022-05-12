@@ -247,6 +247,10 @@ export default function FindRealtor() {
     console.log(state.starRating);
   };
 
+  const formatNumber = (phNumber) => {
+    var formatedNumber = phNumber.substring(0,3) + "-" + phNumber.substring(3,6) + "-" + phNumber.substring(6,phNumber.length)
+    return formatedNumber
+  };
   return (
     <>
       {showLoader ? (
@@ -612,7 +616,6 @@ export default function FindRealtor() {
                                   <a
                                     target={"_blank"}
                                     href={
-                                      "https://" +
                                       state.realtorSelected.realtor[r.value]
                                     }
                                     className="text-blue-500"
@@ -622,7 +625,9 @@ export default function FindRealtor() {
                                 </dd>
                               ) : (
                                 <dd className="mt-1 text-sm text-grey-900">
-                                  {state.realtorSelected.realtor[r.value]}
+                                  {(r.name.includes("Phone")) ? 
+                                  formatNumber(state.realtorSelected.realtor[r.value])
+                                  : state.realtorSelected.realtor[r.value]}
                                 </dd>
                               )}
                             </div>

@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
 import { v4 as uuidv4 } from "uuid";
+import FeatherIcon from "feather-icons-react";
 
 const SASTOKEN = process.env.REACT_APP_SAS_KEY;
 const IMAGEBUCKETURL = process.env.REACT_APP_IMAGE_URL;
@@ -121,9 +122,11 @@ export default function NewListingPage() {
                 Street Number
               </label>
               <input
-                type="text"
+                type="number"
                 name="streetNum"
                 id="streetNum"
+                inputmode="numeric" 
+                pattern="\d*"
                 placeholder="Street Number"
                 className="form-input rounded-lg mt-1 p-2 block w-full border-2 border-gray-300 shadow-sm text-blue-gray-900 sm:text-sm focus:ring-chairgreen-400 focus:border-chairgreen-400"
                 onChange={onChange}
@@ -226,14 +229,16 @@ export default function NewListingPage() {
               </label>
               <div className="mt-1 flex rounded-md shadow-sm">
                 <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                  https://
+                  <FeatherIcon icon="airplay" color="#2e5351" />
                 </span>
                 <input
-                  type="text"
+                  type="url"
                   name="projectLink"
                   id="projectLink"
+                  pattern="http(s?)(:\/\/)((www.)?)(([^.]+)\.)?([a-zA-z0-9\-_]+)(\.)([a-zA-z0-9\-_]+)(\/[^\s]*)?"
+                  title="The URL must follow a proper format: https://www.example.com"
+                  placeholder="https://www.example.com"
                   className="form-input focus:outline focus:ring-chairgreen-500 focus:border-chairgreen-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
-                  placeholder="www.example.com"
                   onChange={onChange}
                 />
               </div>
