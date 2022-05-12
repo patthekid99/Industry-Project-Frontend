@@ -165,9 +165,9 @@ export default function FindDeveloper() {
 
   const showStars=(avgratings)=>{
     var totalStars = 5
-    {[...new Array(totalStars)].map((arr, index) => {
-       index < avgratings ? <FeatherIcon icon="airplay" color="#2e5351" /> : <FeatherIcon icon="star" color="#2e5351" />;
-    })}
+    var arr = [...new Array(totalStars)]
+    var x = arr.map((array, index) => index < avgratings ? <FeatherIcon icon="star" fill='#FFD700' color="#FFD700" key={index}/> :<FeatherIcon icon="star" color="#FFD700" key={index}/>)
+   return x;
   };
 
   return (
@@ -360,14 +360,13 @@ export default function FindDeveloper() {
                                   </div>
                                   <div>
                                     <div className="text-sm">
-                                      <a
-                                        href="#"
+                                      <p
                                         className="font-medium text-gray-900"
                                       >
                                         {review.potentialBuyer.firstName +
                                           " " +
                                           review.potentialBuyer.lastName}
-                                      </a>
+                                      </p>
                                     </div>
                                     <div className="mt-1 text-sm text-gray-700">
                                       <p className="break-all">
@@ -508,6 +507,13 @@ export default function FindDeveloper() {
                                 <dd className="mt-1 text-sm text-grey-900">
                                   {(d.name.includes("Phone")) ? 
                                   formatNumber(devSelected.developer[d.value])
+                                  : d.name.includes("Average Rating") ? 
+                                  <div className="flex flex-row">
+                                    {showStars(devSelected.developer[d.value])}
+
+                                    <p className="text-lg pb-1 ml-2 -mt-1"> ({devSelected.reviews.length})</p>
+                                    
+                                  </div>
                                   :
                                   devSelected.developer[d.value]}
                                 </dd>
