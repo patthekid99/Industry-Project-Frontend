@@ -13,7 +13,7 @@ const realtorKeys = [
   { name: "Email", value: "email", link: false, icon: "mail" },
   { name: "Company Name", value: "companyName", link: false, icon: "tablet" },
   { name: "Phone", value: "phoneNumber", link: false, icon: "phone" },
-  { name: "Average Rating", value: "avgStarRating", link: false, icon: "hash" },
+  { name: "Average Rating", value: "avgStarRating", link: false, icon: "thumbs-up" },
   { name: "Website", value: "website", link: true, icon: "airplay" },
   { name: "LinkedIn", value: "linkedIn", link: true, icon: "linkedin" },
   { name: "Twitter", value: "twitter", link: true, icon: "twitter" },
@@ -251,6 +251,14 @@ export default function FindRealtor() {
     var formatedNumber = phNumber.substring(0,3) + "-" + phNumber.substring(3,6) + "-" + phNumber.substring(6,phNumber.length)
     return formatedNumber
   };
+
+  const showStars=(avgratings)=>{
+    var totalStars = 5
+    var arr = [...new Array(totalStars)]
+    var x = arr.map((array, index) => index < avgratings ? <FeatherIcon icon="star" fill='#FFD700' color="#FFD700" key={index}/> :<FeatherIcon icon="star" color="#FFD700" key={index}/>)
+   return x;
+  };
+
   return (
     <>
       {showLoader ? (
@@ -479,14 +487,13 @@ export default function FindRealtor() {
                                   </div>
                                   <div>
                                     <div className="text-sm">
-                                      <a
-                                        href="#"
+                                      <p
                                         className="font-medium text-gray-900"
                                       >
                                         {review.potentialBuyer.firstName +
                                           " " +
                                           review.potentialBuyer.lastName}
-                                      </a>
+                                      </p>
                                     </div>
                                     <div className="m-1 text-sm text-gray-700">
                                       <p className="break-all">
@@ -627,7 +634,14 @@ export default function FindRealtor() {
                                 <dd className="mt-1 text-sm text-grey-900">
                                   {(r.name.includes("Phone")) ? 
                                   formatNumber(state.realtorSelected.realtor[r.value])
-                                  : state.realtorSelected.realtor[r.value]}
+                                  : r.name.includes("Average Rating") ? 
+                                  <div className="flex flex-row">
+                                    {showStars(state.realtorSelected.realtor[r.value])}
+
+                                    <p className="text-lg pb-1 ml-2 -mt-1"> ({state.realtorSelected.reviews.length})</p>
+                                    
+                                  </div>
+                                  :state.realtorSelected.realtor[r.value]}
                                 </dd>
                               )}
                             </div>

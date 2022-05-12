@@ -139,13 +139,20 @@ export default function FindDeveloper() {
     }
   };
 
-  const sortByRating = async (e) => {
+  const sortBy = async (e) => {
+    console.log(e.target.value)
     var result;
     if (!e.target.value) {
       result = await axios.get(baseURL + "directory/developers");
-    } else {
-      result = await axios.get(baseURL + `developers/rating/${e.target.value}`);
-    }
+    } else if (e.target.value === 'ascending') {
+      result = await axios.get(baseURL + `directory/developers/rating/${e.target.value}`); // needs to hit end point
+    } else if (e.target.value === 'descending') {
+      result = await axios.get(baseURL + `directory/developers/rating/${e.target.value}`); // needs to hit end point 
+    } else if (e.target.value === 'a-z') {
+      result = await axios.get(baseURL + `directory/developers/`);
+    } else if (e.target.value === 'z-a') {
+      result = await axios.get(baseURL + `directory/developers/${e.target.value}`); 
+    } 
     const updateSelected = await axios.get(
       baseURL + `directory/developers/${result.data[0].developerID}`
     );
@@ -211,10 +218,12 @@ export default function FindDeveloper() {
                     <select
                       id="sort-by"
                       name="sort-by"
-                      onChange={sortByRating}
+                      onChange={sortBy}
                       className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-chairgreen-500 focus:border-chairgreen-500"
                     >
                       <option value={""}> Sort By </option>
+                      <option value={"a-z"}>Alphabetical, A-Z</option>
+                      <option value={"z-a"}>Alphabetical, Z-A</option>
                       <option value={"ascending"}>Rating, Asc</option>
                       <option value={"descending"}>Rating, Desc</option>
                     </select>
