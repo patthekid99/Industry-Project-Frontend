@@ -395,7 +395,7 @@ export default function FindDeveloper() {
                                   </label>
                                   <p className="text-sm leading-5 text-gray-500 mx-4 mt-4">
                                     How would you rate your expiereince with
-                                    this realtor?
+                                    this developer?
                                   </p>
                                   <fieldset className="mt-4">
                                     <legend className="sr-only">

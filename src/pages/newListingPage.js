@@ -64,9 +64,15 @@ export default function NewListingPage() {
 
   const addListing = async (e) => {
     e.preventDefault();
-    const picname = uuidv4();
-    uploadFile(picname);
-    var projectData = { ...project, projectImage: picname };
+    var projectData;
+    if (imageFile != null) {
+      const picname = uuidv4();
+      uploadFile(picname);
+      projectData = { ...project, projectImage: picname };
+    } else {
+      projectData = { ...project };
+    }
+
     const result = await axios.post(
       `${process.env.REACT_APP_GLOBAL_API}api/Listing`,
       projectData,

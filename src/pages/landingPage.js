@@ -82,10 +82,11 @@ export default function LandingPage(formType) {
                         {state ? (
                           <form onSubmit={Login}>
                             <p
-                              className="my-4 text-center font-medium text-chairgreen-600 hover:text-chairgreen-500"
+                              className="my-4 text-center font-medium text-chairgreen-600 hover:text-chairgreen-500 hover:cursor-pointer"
                               onClick={() => setState(false)}
                             >
-                              Or register for a free account
+                              Or <span className="underline">register</span> for
+                              a free account
                             </p>
                             <div className="mb-4">
                               <input
@@ -125,10 +126,11 @@ export default function LandingPage(formType) {
                         ) : (
                           <form onSubmit={Register}>
                             <p
-                              className="my-4 text-center font-medium text-chairgreen-600 hover:text-chairgreen-500"
+                              className="my-4 text-center font-medium text-chairgreen-600 hover:text-chairgreen-500 hover:cursor-pointer"
                               onClick={() => setState(true)}
                             >
-                              Or if you already have an account signin
+                              Or if you already have an account{" "}
+                              <span className="underline">signin</span>
                             </p>
                             <div className="mb-4">
                               <input
