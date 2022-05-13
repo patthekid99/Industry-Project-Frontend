@@ -354,7 +354,7 @@ export default function FindRealtor() {
                         />
                       </div>
                       <div className="flex-auto min-w-0 ml-4 mr-6 md:block group-hover:block">
-                        <p>{r.firstName + " " + r.lastName}</p>
+                        <p>{!r.firstName || !r.lastName ? "" : r.firstName + " " + r.lastName}</p>
                       </div>
                     </div>
                   ))}
@@ -408,7 +408,7 @@ export default function FindRealtor() {
                         <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                           <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
                             <h1 className="text-2xl font-bold truncate">
-                              {state.realtorSelected.realtor.firstName +
+                              {!state.realtorSelected.realtor.firstName || !state.realtorSelected.realtor.lastName ? "" :  state.realtorSelected.realtor.firstName +
                                 " " +
                                 state.realtorSelected.realtor.lastName}
                             </h1>
@@ -417,9 +417,9 @@ export default function FindRealtor() {
                       </div>
                       <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
                         <h1 className="text-2xl font-bold text-gray-900 truncate">
-                          {state.realtorSelected.realtor.firstName +
-                            " " +
-                            state.realtorSelected.realtor.lastName}
+                          {!state.realtorSelected.realtor.firstName || !state.realtorSelected.realtor.lastName ? "" :  state.realtorSelected.realtor.firstName +
+                                " " +
+                                state.realtorSelected.realtor.lastName}
                         </h1>
                       </div>
                     </div>
@@ -490,7 +490,7 @@ export default function FindRealtor() {
                                       <p
                                         className="font-medium text-gray-900"
                                       >
-                                        {review.potentialBuyer.firstName +
+                                        {!review.potentialBuyer.firName || review.potentialBuyer.lastName ? "anonymous" : review.potentialBuyer.firstName +
                                           " " +
                                           review.potentialBuyer.lastName}
                                       </p>

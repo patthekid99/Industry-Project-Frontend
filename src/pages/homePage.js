@@ -100,22 +100,6 @@ export default function TestMap() {
       value: "oldest",
       label: "Oldest",
     },
-    {
-      value: "expected",
-      label: "Completion Date",
-    },
-    {
-      value: "presale",
-      label: "Presale",
-    },
-    {
-      value: "soon",
-      label: "Presale Starting Soon",
-    },
-    {
-      value: "available",
-      label: "Available Now",
-    },
   ];
 
   const placeholder = `Search through ${listings.length} listings...`;
@@ -256,10 +240,10 @@ export default function TestMap() {
                                   </div>
                                   <div className="flex border-t border-b mb-6 border-gray-200 py-2">
                                     <span className="text-gray-500">
-                                      Project Status
+                                      Project Link
                                     </span>
                                     <span className="ml-auto text-gray-900">
-                                      {project.projectStatus}
+                                      {project.projectLink}
                                     </span>
                                   </div>
                                   <div
@@ -301,7 +285,7 @@ export default function TestMap() {
               </div>
             </>
           ) : null}
-          <div className="md:min-h-full bg-gray-100  ">
+          <div className="md:min-h-full bg-gray-100">
             <main>
             <div className=" block md:hidden md:justify-center items-center justify-between">
                   <div className="Here">
@@ -376,7 +360,7 @@ export default function TestMap() {
                 </div>
                
 
-                <div className=" md:flex bg-white">
+                <div className="md:flex bg-gray-100">
                   {/* map container */}
                   <div
                     className={`${
@@ -388,7 +372,7 @@ export default function TestMap() {
                         center={[49.2827, -123.1207]}
                         zoom={11}
                         scrollWheelZoom={true}
-                        className="rounded-xl w-20"
+                        className="w-20"
                       >
                         <TileLayer url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png" />
                         {listings.map(
@@ -454,12 +438,12 @@ export default function TestMap() {
                     </div>
                   </div>
 
-                  <div className="w-full md:w-1/3 gap-4 flex flex-wrap bg-gray-100 p-2">
-                  <div className="hidden md:flex w-full md:justify-center items-center justify-between ">
+                  <div className="w-full md:w-1/3 flex-wrap bg-gray-100 p-2">
+                  <div className="hidden md:flex w-full md:justify-center items-top justify-between h-min">
                   <div className="Here">
-                    <div className="mb:justify-evenly mb:flex mb:px-2 mb:pt-2 mb:pb-2 md:w-full md:ml-2  flex-none">
-                      <form className="w-full" onSubmit="">
-                        <div className="relative">
+                  <div className="mb:justify-evenly mb:flex mb:px-2 mb:pt-2 mb:pb-2 md:w-full md:m-2 flex-none">
+                      <form className="w-full">
+                      <div /*className="relative"*/>
                           <label>
                             <input
                               className="rounded-full py-2 pr-10 pl-10 w-full border border-gray-300 focus:border-gray-700 bg-white focus:bg-white focus:outline-none focus:shadow-md "
@@ -526,7 +510,7 @@ export default function TestMap() {
                     ) : null}
                   </div>
                 </div>
-                    <div className=" md:max-h-[75vh] gap-6 flex-wrap flex justify-center overflow-auto pb-4 my-2">
+                    <div className="w-full md:max-h-[80vh] gap-6 flex-wrap flex justify-center justify-self-end overflow-auto pb-4 my-2">
                       {listings.map((i) => (
                         <div className="w-80 max-h-394 p-2 bg-white rounded-xl transform transition-all shadow-lg">
                           <img

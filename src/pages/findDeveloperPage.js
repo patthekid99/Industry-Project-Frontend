@@ -372,7 +372,7 @@ export default function FindDeveloper() {
                                       <p
                                         className="font-medium text-gray-900"
                                       >
-                                        {review.potentialBuyer.firstName +
+                                        {!review.potentialBuyer.firstName || !review.potentialBuyer.lastName ? "anonymous" : review.potentialBuyer.firstName +
                                           " " +
                                           review.potentialBuyer.lastName}
                                       </p>
