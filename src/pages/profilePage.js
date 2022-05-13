@@ -70,6 +70,7 @@ export default function ProfilePage() {
         },
       })
       .then((res) => {
+        console.log(res);
         naviagte("/home");
       });
   };
@@ -212,7 +213,7 @@ export default function ProfilePage() {
                         </label>
                         <div className="mt-1 flex rounded-md shadow-sm">
                           <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          <FeatherIcon icon="airplay" color="#2e5351" />
+                            <FeatherIcon icon="airplay" color="#2e5351" />
                           </span>
                           <input
                             type="url"
@@ -504,7 +505,7 @@ export default function ProfilePage() {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                        <FeatherIcon icon="linkedin" color="#2e5351" />
+                          <FeatherIcon icon="linkedin" color="#2e5351" />
                         </span>
                         <input
                           type="url"

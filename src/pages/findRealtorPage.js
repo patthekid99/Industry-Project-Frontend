@@ -13,7 +13,12 @@ const realtorKeys = [
   { name: "Email", value: "email", link: false, icon: "mail" },
   { name: "Company Name", value: "companyName", link: false, icon: "tablet" },
   { name: "Phone", value: "phoneNumber", link: false, icon: "phone" },
-  { name: "Average Rating", value: "avgStarRating", link: false, icon: "thumbs-up" },
+  {
+    name: "Average Rating",
+    value: "avgStarRating",
+    link: false,
+    icon: "thumbs-up",
+  },
   { name: "Website", value: "website", link: true, icon: "airplay" },
   { name: "LinkedIn", value: "linkedIn", link: true, icon: "linkedin" },
   { name: "Twitter", value: "twitter", link: true, icon: "twitter" },
@@ -152,7 +157,8 @@ export default function FindRealtor() {
   const searchRealtors = async (e) => {
     var result;
     console.log(e.target.value);
-    const trimed = e.target.value.split(" ").join("");
+    // const trimed = e.target.value.split(" ").join("");
+    const trimed = e.target.value;
     if (!trimed) {
       result = await axios.get(baseURL + "directory/realtors");
     } else {
@@ -198,9 +204,10 @@ export default function FindRealtor() {
 
   const filterByCompany = async (e) => {
     var result;
-    console.log(e.target.value);
-    const trimed = e.target.value.split(" ").join("");
-    console.log(trimed);
+    // console.log(e.target.value);
+    // const trimed = e.target.value.split(" ").join("");
+    // console.log(trimed);
+    const trimed = e.target.value;
     if (!trimed) {
       result = await axios.get(baseURL + "directory/realtors");
     } else {
@@ -248,15 +255,26 @@ export default function FindRealtor() {
   };
 
   const formatNumber = (phNumber) => {
-    var formatedNumber = phNumber.substring(0,3) + "-" + phNumber.substring(3,6) + "-" + phNumber.substring(6,phNumber.length)
-    return formatedNumber
+    var formatedNumber =
+      phNumber.substring(0, 3) +
+      "-" +
+      phNumber.substring(3, 6) +
+      "-" +
+      phNumber.substring(6, phNumber.length);
+    return formatedNumber;
   };
 
-  const showStars=(avgratings)=>{
-    var totalStars = 5
-    var arr = [...new Array(totalStars)]
-    var x = arr.map((array, index) => index < avgratings ? <FeatherIcon icon="star" fill='#FFD700' color="#FFD700" key={index}/> :<FeatherIcon icon="star" color="#FFD700" key={index}/>)
-   return x;
+  const showStars = (avgratings) => {
+    var totalStars = 5;
+    var arr = [...new Array(totalStars)];
+    var x = arr.map((array, index) =>
+      index < avgratings ? (
+        <FeatherIcon icon="star" fill="#FFD700" color="#FFD700" key={index} />
+      ) : (
+        <FeatherIcon icon="star" color="#FFD700" key={index} />
+      )
+    );
+    return x;
   };
 
   return (
@@ -354,7 +372,11 @@ export default function FindRealtor() {
                         />
                       </div>
                       <div className="flex-auto min-w-0 ml-4 mr-6 md:block group-hover:block">
-                        <p>{!r.firstName || !r.lastName ? "" : r.firstName + " " + r.lastName}</p>
+                        <p>
+                          {!r.firstName || !r.lastName
+                            ? ""
+                            : r.firstName + " " + r.lastName}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -395,7 +417,7 @@ export default function FindRealtor() {
                       <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
                         <div className="flex">
                           <img
-                            className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
+                            className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32 object-cover"
                             src={
                               state.realtorSelected.realtor.profilePic
                                 ? IMAGEBUCKETURL +
@@ -408,18 +430,24 @@ export default function FindRealtor() {
                         <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                           <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
                             <h1 className="text-2xl font-bold truncate">
-                              {!state.realtorSelected.realtor.firstName || !state.realtorSelected.realtor.lastName ? "" :  state.realtorSelected.realtor.firstName +
-                                " " +
-                                state.realtorSelected.realtor.lastName}
+                              {!state.realtorSelected.realtor.firstName ||
+                              !state.realtorSelected.realtor.lastName
+                                ? ""
+                                : state.realtorSelected.realtor.firstName +
+                                  " " +
+                                  state.realtorSelected.realtor.lastName}
                             </h1>
                           </div>
                         </div>
                       </div>
                       <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
                         <h1 className="text-2xl font-bold text-gray-900 truncate">
-                          {!state.realtorSelected.realtor.firstName || !state.realtorSelected.realtor.lastName ? "" :  state.realtorSelected.realtor.firstName +
-                                " " +
-                                state.realtorSelected.realtor.lastName}
+                          {!state.realtorSelected.realtor.firstName ||
+                          !state.realtorSelected.realtor.lastName
+                            ? ""
+                            : state.realtorSelected.realtor.firstName +
+                              " " +
+                              state.realtorSelected.realtor.lastName}
                         </h1>
                       </div>
                     </div>
@@ -475,7 +503,7 @@ export default function FindRealtor() {
                                 <div className="flex space-x-3">
                                   <div className="flex-shrink-0">
                                     <img
-                                      className="h-10 w-10 rounded-full"
+                                      className="h-10 w-10 rounded-full object-cover"
                                       src={
                                         review.potentialBuyer.profilePic
                                           ? IMAGEBUCKETURL +
@@ -487,12 +515,13 @@ export default function FindRealtor() {
                                   </div>
                                   <div>
                                     <div className="text-sm">
-                                      <p
-                                        className="font-medium text-gray-900"
-                                      >
-                                        {!review.potentialBuyer.firName || review.potentialBuyer.lastName ? "anonymous" : review.potentialBuyer.firstName +
-                                          " " +
-                                          review.potentialBuyer.lastName}
+                                      <p className="font-medium text-gray-900">
+                                        {review.potentialBuyer.firstName ||
+                                        review.potentialBuyer.lastName
+                                          ? review.potentialBuyer.firstName +
+                                            " " +
+                                            review.potentialBuyer.lastName
+                                          : "anonymous"}
                                       </p>
                                     </div>
                                     <div className="m-1 text-sm text-gray-700">
@@ -632,16 +661,24 @@ export default function FindRealtor() {
                                 </dd>
                               ) : (
                                 <dd className="mt-1 text-sm text-grey-900">
-                                  {(r.name.includes("Phone")) ? 
-                                  formatNumber(state.realtorSelected.realtor[r.value])
-                                  : r.name.includes("Average Rating") ? 
-                                  <div className="flex flex-row">
-                                    {showStars(state.realtorSelected.realtor[r.value])}
+                                  {r.name.includes("Phone") ? (
+                                    formatNumber(
+                                      state.realtorSelected.realtor[r.value]
+                                    )
+                                  ) : r.name.includes("Average Rating") ? (
+                                    <div className="flex flex-row">
+                                      {showStars(
+                                        state.realtorSelected.realtor[r.value]
+                                      )}
 
-                                    <p className="text-lg pb-1 ml-2 -mt-1"> ({state.realtorSelected.reviews.length})</p>
-                                    
-                                  </div>
-                                  :state.realtorSelected.realtor[r.value]}
+                                      <p className="text-lg pb-1 ml-2 -mt-1">
+                                        {" "}
+                                        ({state.realtorSelected.reviews.length})
+                                      </p>
+                                    </div>
+                                  ) : (
+                                    state.realtorSelected.realtor[r.value]
+                                  )}
                                 </dd>
                               )}
                             </div>
